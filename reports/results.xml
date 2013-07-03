@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><testsuite name="nosetests" tests="5" errors="2" failures="0" skip="0"><testcase classname="tests.tests.test_example.Test" name="test_basic_example" time="5.217"><error type="selenium.common.exceptions.WebDriverException" message="Message: u'Not supported in OperaDriver yet' ; Stacktrace: &#10;    at com.opera.core.systems.OperaDriver$OperaOptions.window (OperaDriver.java:929)&#10;    at org.openqa.selenium.support.events.EventFiringWebDriver$EventFiringOptions.window (EventFiringWebDriver.java:527)&#10;    at org.openqa.selenium.remote.server.handler.MaximizeWindow.call (MaximizeWindow.java:30)&#10;    at org.openqa.selenium.remote.server.handler.MaximizeWindow.call (MaximizeWindow.java:1)&#10;    at java.util.concurrent.FutureTask$Sync.innerRun (None:-1)&#10;    at java.util.concurrent.FutureTask.run (None:-1)&#10;    at org.openqa.selenium.remote.server.DefaultSession$1.run (DefaultSession.java:169)&#10;    at java.util.concurrent.ThreadPoolExecutor.runWorker (None:-1)&#10;    at java.util.concurrent.ThreadPoolExecutor$Worker.run (None:-1)&#10;    at java.lang.Thread.run (None:-1) &#10;-------------------- &gt;&gt; begin captured logging &lt;&lt; --------------------&#10;selenium.webdriver.remote.remote_connection: DEBUG: POST http://172.31.237.7:4444/wd/hub/session {&quot;sessionId&quot;: null, &quot;desiredCapabilities&quot;: {&quot;platform&quot;: &quot;WINDOWS&quot;, &quot;browserName&quot;: &quot;opera&quot;, &quot;version&quot;: &quot;12&quot;, &quot;name&quot;: &quot;windows7_opera_12_tests&quot;, &quot;javascriptEnabled&quot;: true}}&#10;selenium.webdriver.remote.remote_connection: DEBUG: POST http://172.31.237.7:4444/wd/hub/session/83c86ef9-afc3-4404-ae47-8f4261764b30/window/current/maximize {&quot;windowHandle&quot;: &quot;current&quot;, &quot;sessionId&quot;: &quot;83c86ef9-afc3-4404-ae47-8f4261764b30&quot;}&#10;--------------------- &gt;&gt; end captured logging &lt;&lt; ---------------------"><![CDATA[  File "D:\wtframework\wtframework\wtf\testobjects\testcase.py", line 101, in run
+    testMethod()
+  File "D:\wtframework\tests\tests\test_example.py", line 39, in test_basic_example
+    webdriver = WTF_WEBDRIVER_MANAGER.new_driver()
+  File "D:\wtframework\wtframework\wtf\web\webdriver.py", line 260, in new_driver
+    self.webdriver = self._webdriver_factory.create_webdriver(testname=testname)
+  File "D:\wtframework\wtframework\wtf\web\webdriver.py", line 98, in create_webdriver
+    self.webdriver.maximize_window()
+  File "C:\Python27\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 483, in maximize_window
+    self.execute(Command.MAXIMIZE_WINDOW, {"windowHandle": "current"})
+  File "C:\Python27\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 165, in execute
+    self.error_handler.check_response(response)
+  File "C:\Python27\lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 158, in check_response
+    raise exception_class(message, screen, stacktrace)
+Message: u'Not supported in OperaDriver yet' ; Stacktrace: 
+    at com.opera.core.systems.OperaDriver$OperaOptions.window (OperaDriver.java:929)
+    at org.openqa.selenium.support.events.EventFiringWebDriver$EventFiringOptions.window (EventFiringWebDriver.java:527)
+    at org.openqa.selenium.remote.server.handler.MaximizeWindow.call (MaximizeWindow.java:30)
+    at org.openqa.selenium.remote.server.handler.MaximizeWindow.call (MaximizeWindow.java:1)
+    at java.util.concurrent.FutureTask$Sync.innerRun (None:-1)
+    at java.util.concurrent.FutureTask.run (None:-1)
+    at org.openqa.selenium.remote.server.DefaultSession$1.run (DefaultSession.java:169)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (None:-1)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (None:-1)
+    at java.lang.Thread.run (None:-1) 
+-------------------- >> begin captured logging << --------------------
+selenium.webdriver.remote.remote_connection: DEBUG: POST http://172.31.237.7:4444/wd/hub/session {"sessionId": null, "desiredCapabilities": {"platform": "WINDOWS", "browserName": "opera", "version": "12", "name": "windows7_opera_12_tests", "javascriptEnabled": true}}
+selenium.webdriver.remote.remote_connection: DEBUG: POST http://172.31.237.7:4444/wd/hub/session/83c86ef9-afc3-4404-ae47-8f4261764b30/window/current/maximize {"windowHandle": "current", "sessionId": "83c86ef9-afc3-4404-ae47-8f4261764b30"}
+--------------------- >> end captured logging << ---------------------]]></error></testcase><testcase classname="tests.tests.test_example.Test" name="test_example_using_abstract_interfaces" time="5.086"><error type="selenium.common.exceptions.WebDriverException" message="Message: u'Not supported in OperaDriver yet' ; Stacktrace: &#10;    at com.opera.core.systems.OperaDriver$OperaOptions.window (OperaDriver.java:929)&#10;    at org.openqa.selenium.support.events.EventFiringWebDriver$EventFiringOptions.window (EventFiringWebDriver.java:527)&#10;    at org.openqa.selenium.remote.server.handler.MaximizeWindow.call (MaximizeWindow.java:30)&#10;    at org.openqa.selenium.remote.server.handler.MaximizeWindow.call (MaximizeWindow.java:1)&#10;    at java.util.concurrent.FutureTask$Sync.innerRun (None:-1)&#10;    at java.util.concurrent.FutureTask.run (None:-1)&#10;    at org.openqa.selenium.remote.server.DefaultSession$1.run (DefaultSession.java:169)&#10;    at java.util.concurrent.ThreadPoolExecutor.runWorker (None:-1)&#10;    at java.util.concurrent.ThreadPoolExecutor$Worker.run (None:-1)&#10;    at java.lang.Thread.run (None:-1) &#10;-------------------- &gt;&gt; begin captured logging &lt;&lt; --------------------&#10;selenium.webdriver.remote.remote_connection: DEBUG: POST http://172.31.237.7:4444/wd/hub/session {&quot;sessionId&quot;: null, &quot;desiredCapabilities&quot;: {&quot;platform&quot;: &quot;WINDOWS&quot;, &quot;browserName&quot;: &quot;opera&quot;, &quot;version&quot;: &quot;12&quot;, &quot;name&quot;: &quot;windows7_opera_12_tests&quot;, &quot;javascriptEnabled&quot;: true}}&#10;selenium.webdriver.remote.remote_connection: DEBUG: POST http://172.31.237.7:4444/wd/hub/session/9e5db8aa-54ee-49fa-a43f-79fa04626dbd/window/current/maximize {&quot;windowHandle&quot;: &quot;current&quot;, &quot;sessionId&quot;: &quot;9e5db8aa-54ee-49fa-a43f-79fa04626dbd&quot;}&#10;--------------------- &gt;&gt; end captured logging &lt;&lt; ---------------------"><![CDATA[  File "D:\wtframework\wtframework\wtf\testobjects\testcase.py", line 101, in run
+    testMethod()
+  File "D:\wtframework\tests\tests\test_example.py", line 52, in test_example_using_abstract_interfaces
+    webdriver = WTF_WEBDRIVER_MANAGER.new_driver()
+  File "D:\wtframework\wtframework\wtf\web\webdriver.py", line 260, in new_driver
+    self.webdriver = self._webdriver_factory.create_webdriver(testname=testname)
+  File "D:\wtframework\wtframework\wtf\web\webdriver.py", line 98, in create_webdriver
+    self.webdriver.maximize_window()
+  File "C:\Python27\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 483, in maximize_window
+    self.execute(Command.MAXIMIZE_WINDOW, {"windowHandle": "current"})
+  File "C:\Python27\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 165, in execute
+    self.error_handler.check_response(response)
+  File "C:\Python27\lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 158, in check_response
+    raise exception_class(message, screen, stacktrace)
+Message: u'Not supported in OperaDriver yet' ; Stacktrace: 
+    at com.opera.core.systems.OperaDriver$OperaOptions.window (OperaDriver.java:929)
+    at org.openqa.selenium.support.events.EventFiringWebDriver$EventFiringOptions.window (EventFiringWebDriver.java:527)
+    at org.openqa.selenium.remote.server.handler.MaximizeWindow.call (MaximizeWindow.java:30)
+    at org.openqa.selenium.remote.server.handler.MaximizeWindow.call (MaximizeWindow.java:1)
+    at java.util.concurrent.FutureTask$Sync.innerRun (None:-1)
+    at java.util.concurrent.FutureTask.run (None:-1)
+    at org.openqa.selenium.remote.server.DefaultSession$1.run (DefaultSession.java:169)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (None:-1)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (None:-1)
+    at java.lang.Thread.run (None:-1) 
+-------------------- >> begin captured logging << --------------------
+selenium.webdriver.remote.remote_connection: DEBUG: POST http://172.31.237.7:4444/wd/hub/session {"sessionId": null, "desiredCapabilities": {"platform": "WINDOWS", "browserName": "opera", "version": "12", "name": "windows7_opera_12_tests", "javascriptEnabled": true}}
+selenium.webdriver.remote.remote_connection: DEBUG: POST http://172.31.237.7:4444/wd/hub/session/9e5db8aa-54ee-49fa-a43f-79fa04626dbd/window/current/maximize {"windowHandle": "current", "sessionId": "9e5db8aa-54ee-49fa-a43f-79fa04626dbd"}
+--------------------- >> end captured logging << ---------------------]]></error></testcase><testcase classname="tests.tests.test_screen_capture_on_fail.TestScreenCaptureOnFail" name="test_assert" time="6.436"><system-err><![CDATA[D:\wtframework\wtframework\wtf\testobjects\testcase.py:122: RuntimeWarning: TestResult has no addExpectedFailure method, reporting as passes
+  RuntimeWarning)
+]]></system-err></testcase><testcase classname="tests.tests.test_screen_capture_on_fail.TestScreenCaptureOnFail" name="test_error" time="5.348"></testcase><testcase classname="tests.tests.test_screen_capture_on_fail.TestScreenCaptureOnFail" name="test_fail" time="7.104"></testcase></testsuite>
