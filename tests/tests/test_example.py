@@ -37,7 +37,7 @@ class Test(WTFBaseTest):
         # according to your config settings. 
         # - see 'selenium' settings in 'configs/default.yaml'
         webdriver = WTF_WEBDRIVER_MANAGER.new_driver()
-        webdriver.get("http://www.google1.com")
+        webdriver.get("http://www.google1vvvvvve.com")
 
         # Use the PageFactory class to instantiate your page.
         google_page = PageFactory.create_page(GoogleSearchPage, webdriver)
