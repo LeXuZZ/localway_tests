@@ -13,4 +13,4 @@ class LocalwayTest(WTFBaseTest):
     home_page = PageFactory.create_page(HomePage, webdriver)
     home_page.search_for_what("1223456")
     home_page.search_for_where("1223456")
-    home_page.search_button_click()
+    home_page.click_search_button()
