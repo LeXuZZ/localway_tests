@@ -53,7 +53,7 @@ selenium:
   # Required if using selenium Grid.
   desired_capabilities:
     # Target browser version.
-    version: 19
+    version: 26
 
     # ANY, ANDROID, LINUX, MAC, UNIX, VISTA, WIN7, WIN8, WINDOWS, XP
     platform: WINDOWS
