@@ -56,10 +56,10 @@ selenium:
     # version: 26
 
     # ANY, ANDROID, LINUX, MAC, UNIX, VISTA, WIN7, WIN8, WINDOWS, XP
-    platform: WIN7
+    platform: XP
 
     # Name you'd like to label your sessions. (useful for labeling on sauce)
-    name: windows7_chrome_last_version_tests
+    name: windows_xp_chrome_last_version_tests
 
 
 
