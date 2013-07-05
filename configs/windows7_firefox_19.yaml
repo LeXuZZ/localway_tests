@@ -34,7 +34,7 @@ selenium:
   # Take screenshot of browser on error.
   take_screenshot: true
   # Take reference screenshot upon encountering a new page.
-  take_reference_screenshot: false
+  take_reference_screenshot: true
 
   # remote_url is required if type=REMOTE.  Set this to point at the Remote Webdriver 
   # connection string.
@@ -56,7 +56,7 @@ selenium:
     version: 19
 
     # ANY, ANDROID, LINUX, MAC, UNIX, VISTA, WIN7, WIN8, WINDOWS, XP
-    platform: ANY
+    platform: WINDOWS
     
     # Name you'd like to label your sessions. (useful for labeling on sauce)
     name: windows7_firefox_19_tests

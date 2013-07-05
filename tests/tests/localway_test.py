@@ -1,3 +1,5 @@
+from selenium.webdriver.support import wait
+from selenium.webdriver.support.wait import WebDriverWait
 from wtframework.wtf.web.page import PageFactory
 from tests.pages.home_page import HomePage
 from wtframework.wtf.testobjects.basetests import WTFBaseTest
@@ -14,3 +16,5 @@ class LocalwayTest(WTFBaseTest):
     home_page.search_for_what("1223456")
     home_page.search_for_where("1223456")
     home_page.click_search_button()
+    WebDriverWait(webdriver, 300)
+    print(webdriver.title)
