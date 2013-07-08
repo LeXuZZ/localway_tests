@@ -32,7 +32,6 @@ class HomePage(PageObject):
         # We can call a mapped element by calling it's lambda function.
         self.search_what().send_keys(search_string)
 
-
     def search_for_where(self, search_string):
         # We can call a mapped element by calling it's lambda function.
         self.search_where().send_keys(search_string)

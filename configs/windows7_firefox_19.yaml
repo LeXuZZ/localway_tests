@@ -56,7 +56,7 @@ selenium:
     version: 19
 
     # ANY, ANDROID, LINUX, MAC, UNIX, VISTA, WIN7, WIN8, WINDOWS, XP
-    platform: WIN7
+    platform: VISTA
     
     # Name you'd like to label your sessions. (useful for labeling on sauce)
     name: windows7_firefox_19_tests
