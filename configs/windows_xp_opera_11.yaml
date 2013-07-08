@@ -59,7 +59,7 @@ selenium:
     platform: XP
 
     # Name you'd like to label your sessions. (useful for labeling on sauce)
-    name: windows7_opera_12_tests
+    name: windows_xp_opera_11_tests
 
 
 
