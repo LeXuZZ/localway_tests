@@ -20,6 +20,7 @@ class LocalwayTest(WTFBaseTest):
         home_page.click_search_button()
         WebDriverWait(webdriver, 300)
         self.assertEqual(webdriver.title, "Localway")
+        assert "Localway" in webdriver.title
 
 if __name__ == "__main__":
     unittest.main()
