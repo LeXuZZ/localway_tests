@@ -56,7 +56,7 @@ selenium:
     version: 12
 
     # ANY, ANDROID, LINUX, MAC, UNIX, VISTA, WIN7, WIN8, WINDOWS, XP
-    platform: VISTA
+    platform: WINDOWS
 
     # Name you'd like to label your sessions. (useful for labeling on sauce)
     name: windows8_opera_12_tests
