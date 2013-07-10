@@ -53,13 +53,13 @@ selenium:
   # Required if using selenium Grid.
   desired_capabilities:
     # Target browser version.
-    version: 11
+    version: 12
 
     # ANY, ANDROID, LINUX, MAC, UNIX, VISTA, WIN7, WIN8, WINDOWS, XP
     platform: XP
 
     # Name you'd like to label your sessions. (useful for labeling on sauce)
-    name: windows_xp_opera_11_tests
+    name: windows_xp_opera_12_tests
 
 
 
