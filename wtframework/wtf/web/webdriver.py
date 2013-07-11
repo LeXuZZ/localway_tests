@@ -95,7 +95,7 @@ class WebDriverFactory(object):
             #handle as local webdriver
             self.webdriver = self.__create_driver_from_browser_config()
 
-        if not WebDriverFactory.OPERA in self._config_reader.get(WebDriverFactory.BROWSER_TYPE_CONFIG):
+        if not WebDriverFactory.OPERA and not WebDriverFactory.INTERNETEXPLORER in self._config_reader.get(WebDriverFactory.BROWSER_TYPE_CONFIG):
             self.webdriver.maximize_window()
 
         return self.webdriver
