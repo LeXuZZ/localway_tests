@@ -1,14 +1,13 @@
 # coding=utf-8
 import unittest
-from nose.util import log
-from selenium.webdriver.support import wait
-from selenium.webdriver.support.wait import WebDriverWait
+from wtframework.wtf.config import ConfigReader
 from tests.pages.results_list_page import ResultsList
-from wtframework.wtf.web.page import PageFactory
+from wtframework.wtf.utils.json_utils import POI_JSON
+from wtframework.wtf.utils.mongo_utils import MongoDB
+from wtframework.wtf.web.page import PageFactory, PageUtils
 from tests.pages.home_page import HomePage
 from wtframework.wtf.testobjects.basetests import WTFBaseTest
 from wtframework.wtf.web.webdriver import WTF_WEBDRIVER_MANAGER
-
 __author__ = 'lxz'
 
 
@@ -16,7 +15,7 @@ class LocalwayTest(WTFBaseTest):
 
     def test_home_page_basic(self):
         webdriver = WTF_WEBDRIVER_MANAGER.new_driver()
-        webdriver.get("http://172.31.237.12/")
+        webdriver.get(ConfigReader('site_credentials').get("default_url"))
         home_page = PageFactory.create_page(HomePage, webdriver)
         home_page.search_for_what(u"Бар")
         home_page.search_for_where(u"Москва")
@@ -25,9 +24,14 @@ class LocalwayTest(WTFBaseTest):
         results_list_page = PageFactory.create_page(ResultsList, webdriver)
         self.assertEqual(webdriver.title, "Localway")
         category = results_list_page.category_filter_list()
-        category_path =  webdriver.execute_script("gPt=function(c){if(c.id!==''){return'id(\"'+c.id+'\")'}if(c===document.body){return c.tagName}var a=0;var e=c.parentNode.childNodes;for(var b=0;b<e.length;b++){var d=e[b];if(d===c){return gPt(c.parentNode)+'/'+c.tagName+'['+(a+1)+']'}if(d.nodeType===1&&d.tagName===c.tagName){a++}}};return gPt(arguments[0]).toLowerCase();", category)
+        category_path = PageUtils.get_element_xpath(category)
         print category_path
         print('test ok')
+
+    def json_test(self):
+        a = POI_JSON("161606af0000000000000000")
+        b = MongoDB()
+        print '1'
 
 if __name__ == "__main__":
     unittest.main()

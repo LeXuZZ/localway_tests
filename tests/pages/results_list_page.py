@@ -17,6 +17,10 @@ class ResultsList(PageObject):
     search_what_input = lambda self: self.webdriver.find_element_by_xpath("/html/body/div/form/input")
     search_where_input = lambda self: self.webdriver.find_element_by_xpath("/html/body/div/form/input[2]")
     search_button = lambda self: self.webdriver.find_element_by_xpath("/html/body/div/form/button")
+    poi_place_holder = lambda self: self.webdriver.find_element_by_class_name("poi_placeholder")
+    poi_list = lambda self: self.webdriver.find_element_by_xpath("//*[@class=\"poi_list\"]")
+    poi_list_articles = lambda self: self.webdriver.find_elements_by_xpath("//*[@class=\"poi_list\"]/article")
+    pagination_panel = lambda self: self.webdriver.find_element_by_class_name("pagination_panel")
 
     ### End Page Elements Section ###
 

@@ -173,8 +173,8 @@ class PageFactory():
         else:
             # Try the original class
             page_class = page_object_class_or_interface
-            page = PageFactory.__instantiate_page_object(page_class, \
-                                                         webdriver, \
+            page = PageFactory.__instantiate_page_object(page_class,
+                                                         webdriver,
                                                          **kwargs)
             if isinstance(page, PageObject):
                 current_matched_page = page
@@ -300,6 +300,13 @@ class PageUtils():
     '''
     Offers utility methods that operate on a page level.
     '''
+
+    @staticmethod
+    def get_element_xpath(element, webdriver=None):
+        if not webdriver:
+            webdriver = WTF_WEBDRIVER_MANAGER.get_driver()
+        element_xpath = webdriver.execute_script("gPt=function(c){if(c.id!==''){return'id(\"'+c.id+'\")'}if(c===document.body){return c.tagName}var a=0;var e=c.parentNode.childNodes;for(var b=0;b<e.length;b++){var d=e[b];if(d===c){return gPt(c.parentNode)+'/'+c.tagName+'['+(a+1)+']'}if(d.nodeType===1&&d.tagName===c.tagName){a++}}};return gPt(arguments[0]).toLowerCase();", element)
+        return element_xpath
 
     @staticmethod
     def wait_until_page_loaded(page_obj_class,

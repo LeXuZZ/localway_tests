@@ -16,7 +16,7 @@
 ##########################################################################
 from datetime import datetime, timedelta
 from selenium.common.exceptions import ElementNotSelectableException, \
-    TimeoutException
+    TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from wtframework.wtf.config import WTF_TIMEOUT_MANAGER
@@ -92,11 +92,19 @@ class WebElementUtils():
             pass
 
     @staticmethod
+    def check_exists_by_xpath(webdriver, xpath):
+        try:
+            webdriver.find_element_by_xpath(xpath)
+        except NoSuchElementException:
+            return False
+        return True
+
+    @staticmethod
     def is_image_loaded(webdriver, webelement):
         '''
         Check if an image (in an image tag) is loaded.
         Note: This call will not work against background images.  Only Images in <img> tags.
-        
+
         @param webelement: WebDriver web element to validate.
         @type webelement: WebElement
         '''

@@ -30,12 +30,11 @@ def temp_path(file_name=None):
     """
     if file_name is None:
         file_name = generate_timestamped_string("wtf_temp_file")
-    
+
     return os.path.join(tempfile.gettempdir(), file_name)
 
 
-
-def create_temp_file(file_name=None, string_or_another_file = ""):
+def create_temp_file(file_name=None, string_or_another_file=""):
     """
     Creates a temp file using a given name.  Temp files are placed in the Project/temp/ 
     directory.  Any temp files being created with an existing temp file, will be 
@@ -49,17 +48,18 @@ def create_temp_file(file_name=None, string_or_another_file = ""):
     """
     temp_file_path = temp_path(file_name)
     temp_file = open(temp_file_path, "w+")
-    
+
     try: #attempt to read it as a file.
         original_file = string_or_another_file
         temp_file.write(original_file.read())
-        
+
     except: #handle as a string type if we can't handle as a file.
         file_contents = string_or_another_file
         temp_file.write(file_contents)
 
     temp_file.close()
     return temp_file_path
+
 
 def download_to_tempfile(url, file_name=None, extension=None):
     """
@@ -68,15 +68,15 @@ def download_to_tempfile(url, file_name=None, extension=None):
     @param extension: Extension to use.
     @return: Returns path to the temp file.
     """
-    
+
     if not file_name:
         file_name = generate_timestamped_string("wtf_temp_file")
-    
+
     if extension:
         file_path = temp_path(file_name + extension)
     else:
         file_path = temp_path(file_name)
-    
+
     webFile = urllib.urlopen(url)
     localFile = open(file_path, 'w')
     localFile.write(webFile.read())
