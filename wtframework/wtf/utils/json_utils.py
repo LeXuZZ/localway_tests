@@ -6,7 +6,6 @@ __author__ = 'lxz'
 
 
 class SearchAPI():
-
     def get_response_from_api(self, query):
         return requests.get('http://172.31.237.13:8080/search-api/query?what=' + query)
 
@@ -20,21 +19,22 @@ class SearchAPI():
 
 
 class YandexAPI():
-
     def get_response_from_api(self, query):
-        return requests.get('http://geocode-maps.yandex.ru/1.x/?geocode=' + query + '&kind=house&format=json&rspn=0&spn=0.1,0.1&results=1')
+        return requests.get(
+            'http://geocode-maps.yandex.ru/1.x/?geocode=' + query + '&kind=house&format=json&rspn=0&spn=0.1,0.1&results=1')
 
     def get_found_count(self, query):
         response = self.get_response_from_api(query)
-        return json.loads(response._content)['response']['GeoObjectCollection']['metaDataProperty']['GeocoderResponseMetaData']['found']
+        return json.loads(response._content)['response']['GeoObjectCollection']['metaDataProperty'][
+            'GeocoderResponseMetaData']['found']
 
 
 class POI_JSON():
-
     _json = None
 
     def __init__(self, poi_id):
-        self._json = requests.get(ConfigReader('site_credentials').get("default_url") + "portal-api/poi/" + poi_id).json()
+        self._json = requests.get(
+            ConfigReader('site_credentials').get("default_url") + "portal-api/poi/" + poi_id).json()
 
     @property
     def id(self):

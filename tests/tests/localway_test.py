@@ -30,7 +30,7 @@ class LocalwayTest(WTFBaseTest):
 
     def json_test(self):
         a = POI_JSON("161606af0000000000000000")
-        b = MongoDB()
+        b = MongoDB().localway_collection
         print '1'
 
 if __name__ == "__main__":

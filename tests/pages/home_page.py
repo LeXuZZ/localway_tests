@@ -19,7 +19,7 @@ class HomePage(PageObject):
     search_where_input = lambda self: self.webdriver.find_element_by_id(
         "input-where")
     search_button = lambda self: self.webdriver.find_element_by_xpath(
-        "/html/body/section/section/section/section/form/button")
+        "//*[@data-bind=\"search\"]")
     ### End Page Elements Section ###
 
 
@@ -29,12 +29,10 @@ class HomePage(PageObject):
             raise InvalidPageError("This page did not pass HomePage page validation.")
 
     def search_for_what(self, search_string):
-        # We can call a mapped element by calling it's lambda function.
         self.search_what_input().clear()
         self.search_what_input().send_keys(search_string)
 
     def search_for_where(self, search_string):
-        # We can call a mapped element by calling it's lambda function.
         self.search_where_input().clear()
         self.search_where_input().send_keys(search_string)
 

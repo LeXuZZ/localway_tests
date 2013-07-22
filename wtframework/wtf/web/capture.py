@@ -57,10 +57,11 @@ class WebScreenShotUtil():
             # If this is a remote webdriver.  We need to transmit the image data 
             # back across system boundries as a base 64 encoded string so it can 
             # be decoded back on the local system and written to disk.
-            base64_data = webdriver.get_screenshot_as_base64()
-            screenshot_data = base64.decodestring(base64_data)
-            screenshot_file = open(file_location, "w")
-            screenshot_file.write(screenshot_data)
-            screenshot_file.close()
+            # base64_data = webdriver.get_screenshot_as_base64()
+            # screenshot_data = base64.decodestring(base64_data)
+            # screenshot_file = open(file_location, "w")
+            # screenshot_file.write(screenshot_data)
+            # screenshot_file.close()
+            webdriver.get_screenshot_as_file(file_location)
         else:
             webdriver.save_screenshot(file_location)
