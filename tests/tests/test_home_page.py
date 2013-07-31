@@ -3,6 +3,7 @@ import unittest
 from selenium.webdriver.common.keys import Keys
 from tests.pages import ResultsList
 from tests.pages.home_page import HomePage
+from tests.pages.none_results_page import NoneResultsList
 from tests.pages.poi_page import POIPage
 from tests.utils.data_utils import convert_ms_to_HM, crop_first_zero_if_exist, get_digits_from_string, delete_newlines_for_description_and_intro, create_address_from_poi, create_dict_for_contacts, convert_working_time_from_poi, convert_average_price_from_poi, convert_business_lunch_from_poi
 from wtframework.wtf.utils.json_utils import YandexAPI, SearchAPI, POI_JSON
@@ -118,9 +119,8 @@ class HomePageTest(WTFBaseTest):
         home_page.search_for_where(query)
         home_page.click_search_button()
         webdriver.implicitly_wait(20)
-        results_list_page = PageFactory.create_page(ResultsList, webdriver)
-        self.assertEqual(u'Ничего не найдено', results_list_page.poi_place_holder().text,
-                         'POI list is not empty. Message \'Nothing found\' is not displayed')
+        none_results_page = PageFactory.create_page(NoneResultsList, webdriver)
+        none_results_page.check_text_presence()
 
     def test_pagination_existence_true_scenario(self):
         webdriver = self.set_up()

@@ -19,7 +19,7 @@ class HomePage(PageObject):
     search_where_input = lambda self: self.webdriver.find_element_by_id(
         "input-where")
     search_button = lambda self: self.webdriver.find_element_by_xpath(
-        "//*[@data-bind=\"search\"]")
+        "//button[@data-bind=\"search\"]")
     ### End Page Elements Section ###
 
     def _validate_page(self, webdriver):
