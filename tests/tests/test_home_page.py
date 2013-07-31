@@ -4,8 +4,9 @@ from selenium.webdriver.common.keys import Keys
 from tests.pages import ResultsList
 from tests.pages.home_page import HomePage
 from tests.pages.poi_page import POIPage
+from tests.utils.data_utils import convert_ms_to_HM, crop_first_zero_if_exist, get_digits_from_string, delete_newlines_for_description_and_intro, create_address_from_poi, create_dict_for_contacts, convert_working_time_from_poi, convert_average_price_from_poi, convert_business_lunch_from_poi
 from wtframework.wtf.utils.json_utils import YandexAPI, SearchAPI, POI_JSON
-from wtframework.wtf.utils.mongo_utils import MongoDB
+from tests.utils.mongo_utils import MongoDB
 from wtframework.wtf.web.page import PageFactory
 from wtframework.wtf.config import ConfigReader
 from wtframework.wtf.testobjects.basetests import WTFBaseTest
@@ -15,6 +16,8 @@ __author__ = 'lxz'
 
 
 class HomePageTest(WTFBaseTest):
+    maxDiff = None
+
     def set_up(self):
         webdriver = WTF_WEBDRIVER_MANAGER.new_driver()
         webdriver.get(ConfigReader('site_credentials').get("default_url"))
@@ -135,8 +138,8 @@ class HomePageTest(WTFBaseTest):
         webdriver = self.set_up()
         home_page = PageFactory.create_page(HomePage, webdriver)
         query = u"Дельфин"
-        self.assertLess(SearchAPI().get_total_count(query), SearchAPI().get_count_on_page(query),
-                        'Need to change the What query')
+        self.assertLessEqual(SearchAPI().get_total_count(query), SearchAPI().get_count_on_page(query),
+                             'Need to change the What query')
         home_page.search_for_what(query)
         home_page.click_search_button()
         webdriver.implicitly_wait(20)
@@ -144,50 +147,76 @@ class HomePageTest(WTFBaseTest):
         self.assertFalse(results_list_page.pagination_panel().is_displayed())
 
     def test_yandex_map_existence_true_scenario(self):
-        poi_id_with_yandex_map = '162239af0000000000000000'
+        poi_id_with_yandex_map = MongoDB().get_random_poi_with_existing_coordinates()['_id']
         webdriver = self.set_up()
-        webdriver.get(ConfigReader('site_credentials').get("default_url") + '#poi/' + poi_id_with_yandex_map)
+        webdriver.get(ConfigReader('site_credentials').get("default_url") + '#poi?id=' + str(poi_id_with_yandex_map))
         webdriver.implicitly_wait(20)
         poi_page = PageFactory.create_page(POIPage, webdriver)
-        self.assertIsNotNone(POI_JSON(poi_id_with_yandex_map).lat)
-        self.assertIsNotNone(POI_JSON(poi_id_with_yandex_map).lon)
+        self.assertIsNotNone(POI_JSON(str(poi_id_with_yandex_map)).lat)
+        self.assertIsNotNone(POI_JSON(str(poi_id_with_yandex_map)).lon)
         self.assertTrue(poi_page.yandex_map().is_displayed())
 
     def test_yandex_map_existence_false_scenario(self):
-        poi_id_without_yandex_map = '161708af0000000000000000'
+        poi_id_without_yandex_map = MongoDB().get_random_poi_without_existing_coordinates()['_id']
         webdriver = self.set_up()
-        webdriver.get(ConfigReader('site_credentials').get("default_url") + '#poi/' + poi_id_without_yandex_map)
+        webdriver.get(ConfigReader('site_credentials').get("default_url") + '#poi?id=' + str(poi_id_without_yandex_map))
         webdriver.implicitly_wait(20)
         poi_page = PageFactory.create_page(POIPage, webdriver)
-        self.assertIsNone(POI_JSON(poi_id_without_yandex_map).lat)
-        self.assertIsNone(POI_JSON(poi_id_without_yandex_map).lon)
+        self.assertIsNone(POI_JSON(str(poi_id_without_yandex_map)).lat)
+        self.assertIsNone(POI_JSON(str(poi_id_without_yandex_map)).lon)
         self.assertFalse(poi_page.yandex_map().is_displayed())
 
     def test_cuisine_is_shown(self):
-        random_poi_id_with_cuisines = MongoDB().get_random_poi_id_with_cuisines()
+        random_poi_id_with_cuisines = MongoDB().get_random_poi_with_cuisines()['_id']
         webdriver = self.set_up()
         webdriver.get(
-            ConfigReader('site_credentials').get("default_url") + '#poi/' + str(random_poi_id_with_cuisines))
+            ConfigReader('site_credentials').get("default_url") + '#poi?id=' + str(random_poi_id_with_cuisines))
         webdriver.implicitly_wait(20)
         poi_page = PageFactory.create_page(POIPage, webdriver)
         self.assertGreater(len(poi_page.cuisines()), 0, "block cuisines does not exist")
 
     def test_cuisine_is_not_shown(self):
-        random_poi_id_without_cuisines = MongoDB().get_random_poi_id_without_cuisines()
+        random_poi_id_without_cuisines = MongoDB().get_random_poi_without_cuisines()['_id']
         webdriver = self.set_up()
         webdriver.get(
-            ConfigReader('site_credentials').get("default_url") + '#poi/' + str(random_poi_id_without_cuisines))
+            ConfigReader('site_credentials').get("default_url") + '#poi?id=' + str(random_poi_id_without_cuisines))
         webdriver.implicitly_wait(20)
         poi_page = PageFactory.create_page(POIPage, webdriver)
         self.assertEqual(len(poi_page.cuisines()), 0, "block cuisines does exist")
 
-        # def test_hotel_stars_and_check_io_is_shown(self):
-        #     poi_with_hotel_stars_and_check_io = MongoDB().get_poi_with_hotel_stars_and_check_io()
-        #     webdriver = self.set_up()
-        #     webdriver.get(webdriver.get(ConfigReader('site_credentials').get("default_url")) + '#poi/' + str(poi_with_hotel_stars_and_check_io))
-        #     webdriver.implicitly_wait(20)
-        #     poi_page = PageFactory.create_page(POIPage, webdriver)
-        #     print '1'
+    def test_hotel_stars_and_check_io_is_shown(self):
+        poi_with_hotel_stars_and_check_io = MongoDB().get_random_poi_with_hotel_stars_greater_than_0_and_check_io()
+        poi_id = poi_with_hotel_stars_and_check_io['_id']
+        hotel_stars_count_in_mongo = poi_with_hotel_stars_and_check_io['hotelStars']
+        checkin_time_in_mongo = crop_first_zero_if_exist(
+            convert_ms_to_HM(poi_with_hotel_stars_and_check_io['checkinTime']))
+        checkout_time_in_mongo = crop_first_zero_if_exist(
+            convert_ms_to_HM(poi_with_hotel_stars_and_check_io['checkoutTime']))
+        webdriver = self.set_up()
+        webdriver.get(ConfigReader('site_credentials').get("default_url") + '#poi?id=' + str(
+            poi_id))
+        webdriver.implicitly_wait(20)
+        poi_page = PageFactory.create_page(POIPage, webdriver)
+        hotel_stars_count_on_ui = get_digits_from_string(poi_page.hotel_stars().get_attribute('class'))
+        self.assertEqual(hotel_stars_count_in_mongo, hotel_stars_count_on_ui, 'hotel stars count different')
+        self.assertEqual(checkin_time_in_mongo, poi_page.checkin_time().text)
+        self.assertEqual(checkout_time_in_mongo, poi_page.checkout_time().text)
+
+    def test_hotel_stars_is_not_shown_and_check_io_is_shown(self):
+        poi_without_hotel_stars_and_check_io = MongoDB().get_random_poi_with_hotel_stars_equals_0_and_check_io_gt_0()
+        poi_id = poi_without_hotel_stars_and_check_io['_id']
+        checkin_time_in_mongo = crop_first_zero_if_exist(
+            convert_ms_to_HM(poi_without_hotel_stars_and_check_io['checkinTime']))
+        checkout_time_in_mongo = crop_first_zero_if_exist(
+            convert_ms_to_HM(poi_without_hotel_stars_and_check_io['checkoutTime']))
+        webdriver = self.set_up()
+        webdriver.get(ConfigReader('site_credentials').get("default_url") + '#poi?id=' + str(
+            poi_id))
+        webdriver.implicitly_wait(20)
+        poi_page = PageFactory.create_page(POIPage, webdriver)
+        self.assertEqual('stars', poi_page.hotel_stars().get_attribute('class'))
+        self.assertEqual(checkin_time_in_mongo, poi_page.checkin_time().text)
+        self.assertEqual(checkout_time_in_mongo, poi_page.checkout_time().text)
 
 
 if __name__ == "__main__":

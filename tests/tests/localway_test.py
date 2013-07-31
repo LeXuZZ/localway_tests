@@ -3,7 +3,7 @@ import unittest
 from wtframework.wtf.config import ConfigReader
 from tests.pages.results_list_page import ResultsList
 from wtframework.wtf.utils.json_utils import POI_JSON
-from wtframework.wtf.utils.mongo_utils import MongoDB
+from tests.utils.mongo_utils import MongoDB
 from wtframework.wtf.web.page import PageFactory, PageUtils
 from tests.pages.home_page import HomePage
 from wtframework.wtf.testobjects.basetests import WTFBaseTest

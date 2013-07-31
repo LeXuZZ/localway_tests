@@ -22,10 +22,9 @@ class HomePage(PageObject):
         "//*[@data-bind=\"search\"]")
     ### End Page Elements Section ###
 
-
     def _validate_page(self, webdriver):
 
-        if not re.search("Localway", webdriver.title):
+        if not re.search('Localway', webdriver.title):
             raise InvalidPageError("This page did not pass HomePage page validation.")
 
     def search_for_what(self, search_string):

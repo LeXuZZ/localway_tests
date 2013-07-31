@@ -15,10 +15,11 @@
 #    along with WTFramework.  If not, see <http://www.gnu.org/licenses/>.
 ##########################################################################
 
-from wtframework.wtf.utils.data_utils import generate_timestamped_string, \
-    generate_timestamp, generate_random_string
 import re
 import unittest
+
+from tests.utils.data_utils import generate_timestamped_string, \
+    generate_timestamp, generate_random_string
 
 
 class TestDataUtils(unittest.TestCase):
