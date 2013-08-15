@@ -1,16 +1,23 @@
 import re
+from tests.pages.block_objects import HeaderBlock, FooterBlock
 from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 __author__ = 'lxz'
 
 
-class ResultsList(PageObject):
+class ResultsListPage(PageObject, HeaderBlock, FooterBlock):
 
 
     ### Page Elements Section ###
-    category_filter_list = lambda self: self.webdriver.find_element_by_class_name("category_filter_list")
-    amenity_filter_list = lambda self: self.webdriver.find_element_by_class_name("amenity_filter_list")
-    cuisine_filter_list = lambda self: self.webdriver.find_element_by_class_name("cuisine_filter_list")
+    categories_checked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[1]/div/ul[1]/li")
+    categories_unchecked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[1]/div/ul[2]/li")
+    # category_filter_list = lambda self: self.webdriver.find_element_by_xpath("//aside/section[1]/div/ul[1]/li")
+    amenities_checked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[2]/div/ul[1]/li")
+    amenities_unchecked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[2]/div/ul[2]/li")
+    # amenity_filter_list = lambda self: self.webdriver.find_element_by_class_name("amenity_filter_list")
+    cuisines_checked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[3]/div/ul[1]/li")
+    cuisines_unchecked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[3]/div/ul[2]/li")
+    # cuisine_filter_list = lambda self: self.webdriver.find_element_by_class_name("cuisine_filter_list")
     district_filter_list = lambda self: self.webdriver.find_element_by_class_name("district_filter_list")
     metro_station_filter_list = lambda self: self.webdriver.find_element_by_class_name("metro_station_filter_list")
     schedule_filter_list = lambda self: self.webdriver.find_element_by_class_name("schedule_filter_list")

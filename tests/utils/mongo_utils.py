@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
+from json import JSONEncoder
 from random import choice
 from bson import ObjectId
 from pymongo import MongoClient
 from wtframework.wtf.config import ConfigReader
 
 __author__ = 'lxz'
+
+
+class MongoEncoder(JSONEncoder):
+    def default(self, obj, **kwargs):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        else:
+            return JSONEncoder.default(obj, **kwargs)
 
 
 class MongoDB():

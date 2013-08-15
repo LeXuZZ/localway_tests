@@ -3,14 +3,16 @@ from collections import defaultdict
 import re
 import urllib
 import urllib2
+from tests.pages.block_objects import HeaderBlock, FooterBlock
 from tests.static.constants import CONTACT_KEYS
+from tests.utils.data_utils import convert_cyrillic_url
 
 __author__ = 'lxz'
 
 from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 
-class POIPage(PageObject):
+class POIPage(PageObject, HeaderBlock, FooterBlock):
     '''
     POIPage
     WTFramework PageObject representing a page like:
@@ -72,7 +74,7 @@ class POIPage(PageObject):
             if CONTACT_KEYS.VK in x.get_attribute('class'): d[CONTACT_KEYS.VK].append(
                 x.get_attribute('href'))
             if CONTACT_KEYS.FACEBOOK in x.get_attribute('class'): d[CONTACT_KEYS.FACEBOOK].append(
-                urllib2.unquote(x.get_attribute('href').encode('ASCII')).decode('utf8'))
+                convert_cyrillic_url(x.get_attribute('href')))
         return d
 
     get_cuisines = lambda self: sorted([x.text for x in self.cuisines()])

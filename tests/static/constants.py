@@ -24,6 +24,8 @@ class POI_KEYS():
     AVERAGE_PRICE = 'averagePrice'
     BUSINESS_LUNCH_PRICE = 'businessLunchPrice'
     CUISINES = 'cuisines'
+    LATITUDE = 'lat'
+    LONGITUDE = 'lon'
 
 
 class CONTACT_KEYS():
@@ -33,3 +35,15 @@ class CONTACT_KEYS():
     TWITTER = 'twitter'
     VK = 'vk.com'
     FACEBOOK = 'facebook'
+
+
+class SECTION_LINKS_SUFFIX():
+    LEISURE = 'ng/#/section/leisure'
+    ACTIVE = 'ng/#/section/active'
+    RESTAURANTS = 'ng/#/section/restaurants'
+    HOTELS = 'ng/#/section/hotels'
+    JOURNEYS = 'ng/#/section/journeys'
+
+
+class URL_PREFIXES():
+    POI_ID_PREFIX = '#/poi?id='

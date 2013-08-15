@@ -43,7 +43,7 @@ selenium:
   # Browser can be the following options.
   # ANDROID, CHROME, FIREFOX, HTMLUNIT, HTMLUNITWITHJS,
   # INTERNETEXPLORER, IPAD, IPHONE, OPERA, SAFARI
-  browser: INTERNETEXPLORER
+  browser: FIREFOX
 
   # Required if browser is set to CHROME.  This should point to the chrome driver path
   # relative to root '/'.
@@ -53,13 +53,13 @@ selenium:
   # Required if using selenium Grid.
   desired_capabilities:
     # Target browser version.
-    version: 10
+    version: 20
 
     # ANY, ANDROID, LINUX, MAC, UNIX, VISTA, WIN7, WIN8, WINDOWS, XP
-    platform: VISTA
+    platform: WIN8
 
     # Name you'd like to label your sessions. (useful for labeling on sauce)
-    name: windows7_ie_10_tests
+    name: windows8_firefox_20_tests
 
 
 

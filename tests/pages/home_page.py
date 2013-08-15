@@ -1,16 +1,12 @@
 import re
+from tests.pages.block_objects import HeaderBlock, FooterBlock
 
 __author__ = 'lxz'
 
 from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 
-class HomePage(PageObject):
-    '''
-    HomePage
-    WTFramework PageObject representing a page like:
-    http://172.31.237.12/
-    '''
+class HomePage(PageObject, HeaderBlock, FooterBlock):
 
 
     ### Page Elements Section ###
@@ -19,7 +15,7 @@ class HomePage(PageObject):
     search_where_input = lambda self: self.webdriver.find_element_by_id(
         "input-where")
     search_button = lambda self: self.webdriver.find_element_by_xpath(
-        "//button[@class=\"btn-search\"]")
+        "/html/body/section/section/section/section/form/button")
     ### End Page Elements Section ###
 
     def _validate_page(self, webdriver):
@@ -36,4 +32,5 @@ class HomePage(PageObject):
         self.search_where_input().send_keys(search_string)
 
     def click_search_button(self):
+        # ActionChains(self.webdriver).move_to_element_with_offset(self.search_button(), 5, -5).click().perform()
         self.search_button().click()

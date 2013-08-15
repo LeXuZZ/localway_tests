@@ -25,6 +25,8 @@ import re
 import time
 import random
 import string
+import urllib2
+from selenium.webdriver import ActionChains
 from tests.static.constants import POI_KEYS
 from tests.utils.mongo_utils import MongoDB
 
@@ -142,3 +144,65 @@ def convert_business_lunch_from_poi(poi):
         if poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] and poi[POI_KEYS.BUSINESS_LUNCH_PRICE][1] not in '':
             d += (poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] + ' - ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE][1])
     return d
+
+
+def delete_last_slash_if_exist(string):
+    return re.sub('/$', '', string)
+
+
+def conver_https_to_http(string):
+    return re.sub('https:', 'http:', string)
+
+
+def handle_contact_url(string):
+    return delete_last_slash_if_exist(conver_https_to_http(string))
+
+
+def convert_cyrillic_url(url):
+    return urllib2.unquote(url.encode('ASCII')).decode('utf8')
+
+
+def get_center_of_webelement(webelement):
+    return [webelement.size['width']/2, webelement.size['height']/2]
+
+
+def get_top_center_of_webelement(webelement):
+    return [webelement.size['width']/2, 0]
+
+
+def get_bottom_center_of_webelement(webelement):
+    return [webelement.size['width']/2, webelement.size['height']]
+
+
+def get_global_position(webelement, point):
+    return {'x': webelement.location['x'] + point[0], 'y': webelement.location['y'] + point[1]}
+
+
+def check_oops_tooltip_position(webelement, webdriver):
+    # ActionChains(webdriver).move_to_element(webelement).click()
+    webelement.click()
+    tooltip = webdriver.find_element_by_xpath('//div[contains(@id,\'ui-tooltip\')]')
+    webelement_pos = get_global_position(webelement, get_bottom_center_of_webelement(webelement))
+    tooltip_pos = get_global_position(tooltip, get_top_center_of_webelement(tooltip))
+    if abs(webelement_pos['x'] - tooltip_pos['x']) == 0 and abs(webelement_pos['y'] - tooltip_pos['y']) == 9:
+        return True
+    else:
+        return False
+
+
+def check_dropdown_menu(webelement, webdriver, element_counter):
+    # ActionChains(webdriver).move_to_element(webelement).click_and_hold(webelement)
+    webelement.click()
+    dropdown = webdriver.find_element_by_xpath('//header/section[2]/ul/li[' + str(element_counter) + ']/div/ul')
+    if dropdown.size['height'] > 0:
+        return True
+    else:
+        return False
+
+
+def check_dropdown_menu_for_city(webelement, webdriver):
+    return check_dropdown_menu(webelement, webdriver, 2)
+
+
+def check_dropdown_menu_for_language(webelement, webdriver):
+    return check_dropdown_menu(webelement, webdriver, 6)

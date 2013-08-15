@@ -1,5 +1,6 @@
+import unittest
 from tests.pages.poi_page import POIPage
-from tests.static.constants import POI_KEYS
+from tests.static.constants import POI_KEYS, URL_PREFIXES
 from wtframework.wtf.testobjects.test_decorators import ddt, csvdata
 from tests.utils.data_utils import delete_newlines_for_description_and_intro, get_digits_from_string, create_address_from_poi, create_dict_for_contacts, convert_working_time_from_poi, convert_average_price_from_poi, convert_business_lunch_from_poi
 from wtframework.wtf.web.page import PageFactory
@@ -10,9 +11,8 @@ from wtframework.wtf.web.webdriver import WTF_WEBDRIVER_MANAGER
 
 __author__ = 'lxz'
 
-
 @ddt
-class HomePageTest(WTFBaseTest):
+class DDTPOIPageTest(WTFBaseTest):
     maxDiff = None
 
     def set_up(self):
@@ -30,7 +30,7 @@ class HomePageTest(WTFBaseTest):
     def test_complex_check_poi_page(self, paramater_dic):
         poi = MongoDB().get_poi_by_id(paramater_dic['poi_id'])
         webdriver = self.set_up()
-        webdriver.get(ConfigReader('site_credentials').get("default_url") + '#poi?id=' + str(
+        webdriver.get(ConfigReader('site_credentials').get("default_url") + URL_PREFIXES.POI_ID_PREFIX + str(
             poi['_id']))
         webdriver.implicitly_wait(20)
         poi_page = PageFactory.create_page(POIPage, webdriver)
@@ -86,3 +86,12 @@ class HomePageTest(WTFBaseTest):
             #check cuisines
         if POI_KEYS.CUISINES in poi.keys():
             self.assertEqual(MongoDB().get_cuisines(poi), poi_page.get_cuisines())
+            #check map existence
+        if POI_KEYS.LONGITUDE in poi.keys() and POI_KEYS.LONGITUDE in poi.keys():
+            self.assertTrue(poi_page.yandex_map().is_displayed())
+        else:
+            self.assertFalse(poi_page.yandex_map().is_displayed())
+
+
+if __name__ == "__main__":
+    unittest.main()
