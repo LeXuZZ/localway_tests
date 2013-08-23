@@ -248,19 +248,6 @@ class CheckLinksTest(WTFBaseTest):
         self.check_link_active(poi_page.footer_journeys_link(), webdriver, SECTION_LINKS_SUFFIX.JOURNEYS)
         self.check_link_nonactive(poi_page.footer_around_link(), webdriver, webdriver.current_url)
 
-    def test_check_links_on_leisure_section_page(self):
-        webdriver = self.set_up_with_suffix(SECTION_LINKS_SUFFIX.LEISURE)
-        for element_number in range(len(webdriver.find_elements_by_xpath(
-                '/html/body/div/section/section[2]/section/div/section/article/ul/li/a')))[1:]:
-            element = webdriver.find_element_by_xpath(
-                '(/html/body/div/section/section[2]/section/div/section/article/ul/li/a)[' + str(element_number) + ']')
-            expected_results_count = webdriver.find_element_by_xpath(
-                '(/html/body/div/section/section[2]/section/div/section/article/ul/li/span)[' + str(
-                    element_number) + ']').text
-            self.check_link_active(element, webdriver, 'ng/#/result?categoryName=' + element.text)
-            self.assertEqual(expected_results_count, webdriver.find_element_by_xpath(
-                '/html/body/div/section/section[2]/section/section/header/div/h6/span').text)
-
     def test_check_all_sections(self):
         webdriver = self.set_up_with_suffix(SECTION_LINKS_SUFFIX.LEISURE)
         found_count = SectionAPI().get_sections()
