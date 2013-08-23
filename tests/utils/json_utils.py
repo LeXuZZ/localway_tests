@@ -1,32 +1,56 @@
 import json
+import re
 import requests
+from tests.static.constants import YANDEX_MAPS_API_REQUESTS
 from wtframework.wtf.config import ConfigReader
 
 __author__ = 'lxz'
 
 
 class SearchAPI():
-    def get_response_from_api(self, query):
+    def get_response_only_what(self, query):
         return requests.get('http://172.31.237.13:8080/search-api/query?what=' + query)
 
+    def get_response(self, what, where, page_size='25'):
+        return requests.get('http://172.31.237.12/search-api/query?sort=wordScore&sort.dir=desc&what=' + what + '&where=' + where + '&pageSize=' + page_size)
+
     def get_count_on_page(self, query):
-        response = self.get_response_from_api(query)
+        response = self.get_response_only_what(query)
         return json.loads(response._content)['countOnPage']
 
     def get_total_count(self, query):
-        response = self.get_response_from_api(query)
+        response = self.get_response_only_what(query)
         return json.loads(response._content)['totalCount']
+
+    def get_items(self, what, where):
+        response = self.get_response(what, where)
+        return json.loads(response._content)['items']
 
 
 class YandexAPI():
     def get_response_from_api(self, query):
-        return requests.get(
-            'http://geocode-maps.yandex.ru/1.x/?geocode=' + query + '&kind=house&format=json&rspn=0&spn=0.1,0.1&results=1')
+        response = requests.get(re.sub('WHERE', query, YANDEX_MAPS_API_REQUESTS.POI_COORDINATES))
+        if response.status_code == 200:
+            return response
+        else:
+            print 'Response status code ' + str(response.status_code) + '. Rejected.'
+            return 0
 
     def get_found_count(self, query):
         response = self.get_response_from_api(query)
         return json.loads(response._content)['response']['GeoObjectCollection']['metaDataProperty'][
             'GeocoderResponseMetaData']['found']
+
+    def get_coordinates(self, query):
+        response = self.get_response_from_api(query)
+        coor_string = json.loads(response._content)['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
+        return {'lat': coor_string.split()[1], 'lon': coor_string.split()[0]}
+
+
+class SectionAPI():
+    def get_sections(self):
+        response = requests.get('http://172.31.237.12/portal-api/site/meta/')
+        return json.loads(response._content)
 
 
 class POI_JSON():

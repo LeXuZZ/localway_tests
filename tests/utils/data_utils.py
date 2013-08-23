@@ -73,7 +73,7 @@ def crop_first_zero_if_exist(time):
 
 
 def get_digits_from_string(string):
-    return re.search('[0-9]', string).group()
+    return re.search('[0-9]+', string).group()
 
 
 def delete_newlines_for_description_and_intro(string):
@@ -206,3 +206,7 @@ def check_dropdown_menu_for_city(webelement, webdriver):
 
 def check_dropdown_menu_for_language(webelement, webdriver):
     return check_dropdown_menu(webelement, webdriver, 6)
+
+
+def get_image_id_from_src(src):
+    return re.search('/(\d+)_', src).group(1)

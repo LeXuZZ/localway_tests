@@ -162,8 +162,8 @@ class PageFactory():
             subclasses = []
             for page_class in page_object_class_or_interface:
                 #attempt to instantiate class.
-                page = PageFactory.__instantiate_page_object(page_class, \
-                                                             webdriver, \
+                page = PageFactory.__instantiate_page_object(page_class,
+                                                             webdriver,
                                                              **kwargs)
                 if isinstance(page, PageObject) and (current_matched_page == None or page > current_matched_page):
                     current_matched_page = page

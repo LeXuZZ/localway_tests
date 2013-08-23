@@ -80,6 +80,11 @@ class MongoDB():
         categories_list = [x for x in categories]
         return categories_list[0]['name']
 
+    def convert_section_id_to_name(self, object_id):
+        sections = self.localway_collection.sections.find({"_id": ObjectId(object_id)})
+        sections_list = [x for x in sections]
+        return sections_list[0]['name']
+
     def convert_cuisine_id_to_name(self, object_id):
         cuisines = self.localway_collection.cuisines.find({"_id": ObjectId(object_id)})
         cuisines_list = [x for x in cuisines]
@@ -110,3 +115,4 @@ class MongoDB():
     get_metro_stations = lambda self, poi: sorted([self.convert_metro_station_id_to_name(str(x)) for x in poi['metroStations']])
     get_amenities = lambda self, poi: sorted([self.convert_amenity_id_to_name(str(x)) for x in poi['amenities']])
     get_categories = lambda self, poi: sorted([self.convert_category_id_to_name(str(x)) for x in poi['categories']])
+    get_sections = lambda self, poi: sorted([self.convert_section_id_to_name(str(x)) for x in poi['sections']])

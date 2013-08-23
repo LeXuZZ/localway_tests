@@ -8,6 +8,8 @@ __author__ = 'lxz'
 class ResultsListPage(PageObject, HeaderBlock, FooterBlock):
 
 
+    articles_xpath = '//section[@class=\"result-items\"]/article'
+    name_xpath_pref = '/div/section/a/h4'
     ### Page Elements Section ###
     categories_checked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[1]/div/ul[1]/li")
     categories_unchecked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[1]/div/ul[2]/li")
@@ -26,7 +28,8 @@ class ResultsListPage(PageObject, HeaderBlock, FooterBlock):
     search_button = lambda self: self.webdriver.find_element_by_xpath("/html/body/div/form/button")
     poi_place_holder = lambda self: self.webdriver.find_element_by_class_name("poi_placeholder")
     poi_list = lambda self: self.webdriver.find_element_by_xpath("//section[@class=\"result-items\"]")
-    poi_list_articles = lambda self: self.webdriver.find_elements_by_xpath("//section[@class=\"result-items\"]/article")
+    articles = lambda self: self.webdriver.find_elements_by_xpath(self.articles_xpath)
+    articles_names = lambda self: self.webdriver.find_elements_by_xpath(self.articles_xpath + self.name_xpath_pref)
     pagination_panel = lambda self: self.webdriver.find_element_by_class_name("pagination")
 
     ### End Page Elements Section ###
@@ -39,4 +42,3 @@ class ResultsListPage(PageObject, HeaderBlock, FooterBlock):
 
         if not re.search('Localway', webdriver.title):
             raise InvalidPageError('This page did not pass ResultsListPage page validation.')
-

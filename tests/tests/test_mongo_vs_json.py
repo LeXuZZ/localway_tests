@@ -2,7 +2,7 @@ import unittest
 import json
 from tests.utils.mongo_utils import MongoDB, MongoEncoder
 from wtframework.wtf.testobjects.basetests import WTFBaseTest
-from wtframework.wtf.utils.json_utils import POI_JSON
+from tests.utils.json_utils import POI_JSON
 
 __author__ = 'lxz'
 
