@@ -37,7 +37,7 @@ class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery):
     cuisines = lambda self: self.webdriver.find_elements_by_xpath("//div[@data-bind=\"cuisines\"]/div/a")
     description = lambda self: self.webdriver.find_element_by_xpath("//p[@data-bind=\"description\"]")
     intro = lambda self: self.webdriver.find_element_by_xpath("//h5[@data-bind=\"intro\"]")
-    image = lambda self: self.webdriver.find_element_by_xpath("//img[@data-bind=\"galleryImage\"]")
+    # image = lambda self: self.webdriver.find_element_by_xpath("//img[@data-bind=\"galleryImage\"]")
     payments = lambda self: self.webdriver.find_elements_by_xpath(
         "//ul[@data-bind=\"payments\"]/li/span[@data-bind=\"link\"]")
     contact_phones = lambda self: self.webdriver.find_elements_by_xpath(

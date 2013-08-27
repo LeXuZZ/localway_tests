@@ -15,7 +15,7 @@ from wtframework.wtf.web.webdriver import WTF_WEBDRIVER_MANAGER
 __author__ = 'lxz'
 
 
-class ResustsPageTest(WTFBaseTest):
+class ResultsPageTest(WTFBaseTest):
 
     maxDiff = None
 

@@ -36,14 +36,17 @@ class FooterBlock():
 
 class PhotoGallery():
 
-    gallery_previous = lambda self: self.webdriver.find_element_by_xpath("//a[@class='slide-prev']")
-    gallery_next = lambda self: self.webdriver.find_element_by_xpath("//a[@class='slide-next']")
-    move_to_thumbnails = lambda self: ActionChains(self.webdriver).move_to_element(self.webdriver.find_element_by_xpath("//div[@class='thumbnails']")).perform()
-    thumbnails_previous = lambda self: self.webdriver.find_element_by_xpath("//div[@class='thumbnails']/a[1])")
-    thumbnails_next = lambda self: self.webdriver.find_element_by_xpath("//div[@class='thumbnails']/a[2]")
-    thumbnails_list = lambda self: self.webdriver.find_elements_by_xpath("//div[@class='thumbs-list']/a")
-    get_images = lambda self: self.webdriver.find_elements_by_xpath("//div[@class='img-container']/img")
-    get_circles = lambda self: self.webdriver.find_elements_by_xpath("//div[@class='see-all']/div[@class='circles']/span")
+    gallery_main = lambda self: self.webdriver.find_element_by_xpath('//lw-gallery/div')
+    gallery_previous = lambda self: self.webdriver.find_element_by_xpath('//a[@class=\'slide-prev\']')
+    gallery_next = lambda self: self.webdriver.find_element_by_xpath('//a[@class=\'slide-next\']')
+    move_to_thumbnails = lambda self: ActionChains(self.webdriver).move_to_element(self.webdriver.find_element_by_xpath(
+        '//div[@class=\'thumbnails\']')).perform()
+    thumbnails_previous = lambda self: self.webdriver.find_element_by_xpath('//div[@class=\'thumbnails\']/a[1])')
+    thumbnails_next = lambda self: self.webdriver.find_element_by_xpath('//div[@class=\'thumbnails\']/a[2]')
+    thumbnails_list = lambda self: self.webdriver.find_elements_by_xpath('//div[@class=\'thumbs-list\']/a')
+    get_images = lambda self: self.webdriver.find_elements_by_xpath('//div[@class=\'img-container\']/img')
+    get_circles = lambda self: self.webdriver.find_elements_by_xpath(
+        '//div[@class=\'see-all\']/div[@class=\'circles\']/span')
 
     get_center_image = lambda self: self.get_images()[1]
 

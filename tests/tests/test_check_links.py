@@ -2,6 +2,9 @@
 import itertools
 from random import choice
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import wait
+from selenium.webdriver.support.wait import WebDriverWait
+from wtframework.wtf.utils.wait_utils import wait_until
 from tests.pages import ResultsListPage, HomePage
 from tests.pages.leisure_section_page import LeisureSectionPage
 from tests.pages.poi_page import POIPage
@@ -261,11 +264,16 @@ class CheckLinksTest(WTFBaseTest):
                     print '         ' + category['name']
                     link_xpath = "//*[contains(@class,\'ng-scope ng-binding\') and contains(text(),\'" + category[
                             'name'] + "\')]"
-                    element = webdriver.find_element_by_xpath(link_xpath)
+                    # element = webdriver.find_element_by_xpath(link_xpath)
+                    element = WebDriverWait(webdriver, 10).until(lambda d: self.displayed(webdriver.find_element_by_xpath(link_xpath)))
                     element_count = get_digits_from_string(webdriver.find_element_by_xpath(link_xpath + '/following-sibling::span').text)
                     self.assertEqual(category['count'], int(element_count))
                     self.check_section_category_link(element, webdriver, 'ng/#/result?categoryName=' + category['name'],
                                                      category['count'])
+
+    def displayed(self, element):
+        if element.is_displayed():
+            return element
 
     def check_section_category_link(self, webelement, webdriver, expected_url, results_count):
         if results_count == 0:

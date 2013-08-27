@@ -184,7 +184,8 @@ def check_oops_tooltip_position(webelement, webdriver):
     tooltip = webdriver.find_element_by_xpath('//div[contains(@id,\'ui-tooltip\')]')
     webelement_pos = get_global_position(webelement, get_bottom_center_of_webelement(webelement))
     tooltip_pos = get_global_position(tooltip, get_top_center_of_webelement(tooltip))
-    if abs(webelement_pos['x'] - tooltip_pos['x']) == 0 and abs(webelement_pos['y'] - tooltip_pos['y']) == 9:
+    # if abs(webelement_pos['x'] - tooltip_pos['x']) == 0 and abs(webelement_pos['y'] - tooltip_pos['y']) == 9:
+    if abs(webelement_pos['y'] - tooltip_pos['y']) == 9:
         return True
     else:
         return False

@@ -2,7 +2,7 @@ import unittest
 from tests.pages.poi_page import POIPage
 from tests.static.constants import POI_KEYS, URL_PREFIXES
 from wtframework.wtf.testobjects.test_decorators import ddt, csvdata
-from tests.utils.data_utils import delete_newlines_for_description_and_intro, get_digits_from_string, create_address_from_poi, create_dict_for_contacts, convert_working_time_from_poi, convert_average_price_from_poi, convert_business_lunch_from_poi
+from tests.utils.data_utils import delete_newlines_for_description_and_intro, get_digits_from_string, create_address_from_poi, create_dict_for_contacts, convert_working_time_from_poi, convert_average_price_from_poi, convert_business_lunch_from_poi, get_image_id_from_src
 from wtframework.wtf.web.page import PageFactory
 from wtframework.wtf.config import ConfigReader
 from wtframework.wtf.testobjects.basetests import WTFBaseTest
@@ -20,6 +20,11 @@ class DDTPOIPageTest(WTFBaseTest):
         webdriver.get(ConfigReader('site_credentials').get("default_url"))
         return webdriver
 
+    def set_up_with_suffix(self, suffix):
+        webdriver = WTF_WEBDRIVER_MANAGER.new_driver()
+        webdriver.get(ConfigReader('site_credentials').get("default_url") + suffix)
+        return webdriver
+
     def generate_pois_id(self):
         for i in range(10):
             poi = MongoDB().get_random_poi()
@@ -29,9 +34,7 @@ class DDTPOIPageTest(WTFBaseTest):
     @csvdata("testdata.csv")
     def test_complex_check_poi_page(self, paramater_dic):
         poi = MongoDB().get_poi_by_id(paramater_dic['poi_id'])
-        webdriver = self.set_up()
-        webdriver.get(ConfigReader('site_credentials').get("default_url") + URL_PREFIXES.POI_ID_PREFIX + str(
-            poi['_id']))
+        webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + paramater_dic['poi_id'])
         webdriver.implicitly_wait(20)
         poi_page = PageFactory.create_page(POIPage, webdriver)
             #check name
@@ -53,10 +56,11 @@ class DDTPOIPageTest(WTFBaseTest):
         if any(c in poi.keys() for c in [POI_KEYS.CITY, POI_KEYS.STREET, POI_KEYS.BUILDING, POI_KEYS.HOUSE]):
             self.assertEqual(create_address_from_poi(poi), poi_page.address().text)
             #check image
-        self.assertEqual(
-            0 if len(poi[POI_KEYS.IMAGES]) == 0 else ConfigReader('site_credentials').get("default_url") + 'gallery/' +
-                                                     poi[POI_KEYS.IMAGES][0],
-            0 if not poi_page.image().is_displayed() else poi_page.image().get_attribute('src'))
+        if POI_KEYS.IMAGES in poi.keys():
+            if poi[POI_KEYS.IMAGES]:
+                self.assertTrue(poi_page.gallery_main().is_displayed())
+            else:
+                self.assertFalse(poi_page.gallery_main().is_displayed())
             #check categories
         if POI_KEYS.CATEGORIES in poi.keys():
             self.assertEqual(MongoDB().get_categories(poi), poi_page.get_categories())

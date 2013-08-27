@@ -110,9 +110,12 @@ class POIPageTest(WTFBaseTest):
 
         thumbnails_list = poi_page.thumbnails_list()
         for i, thumb in list(enumerate(thumbnails_list)):
+            print i
             poi_page.move_to_thumbnails()
-            if i % 7 == 0:
+            webdriver.implicitly_wait(5)
+            if i % 7 == 0 and i != 0:
                 poi_page.thumbnails_next().click()
+                webdriver.implicitly_wait(5)
             poi_page.thumbnails_list()[i].click()
             webdriver.implicitly_wait(5)
             self.assertEqual(poi[POI_KEYS.IMAGES][i], img_id())
