@@ -2,9 +2,10 @@
 from decimal import Decimal
 import time
 from tests.pages import HomePage, ResultsListPage
-from tests.utils.json_utils import SearchAPI
+from tests.static.constants import WEIGHT, POI_KEYS
+from tests.utils.json_utils import SearchAPI, ElasticSearchAPI, YandexAPI
 from tests.utils.mongo_utils import MongoDB
-from tests.utils.weight_util import get_distance_real_weight, check_all_weight
+from tests.utils.weight_util import get_distance_real_weight, check_all_weight, distance
 from wtframework.wtf.web.page import PageFactory
 from wtframework.wtf.config import ConfigReader
 from wtframework.wtf.testobjects.basetests import WTFBaseTest
@@ -24,14 +25,22 @@ class WeightTest(WTFBaseTest):
 
     def test_weight_calculate(self):
         what_query = u'Бар'
-        where_query = u'Москва Тверская 17'
+        where_query = u'Тверская'
         items = SearchAPI().get_items(what_query, where_query)
         for item in items:
             t = time.time()
-            print 'POI name: ' + item['name'] + ' and id: ' + item['_id']
-            poi = MongoDB().get_poi_by_id(item['_id'])
-            fe_score = item['score']
-            be_score = get_distance_real_weight(where_query, poi) + check_all_weight(what_query, poi)
+            print 'POI name: ' + item[POI_KEYS.NAME] + ' and id: ' + item[POI_KEYS.ID]
+            es_poi_street_point = ElasticSearchAPI().get_poi_json(item['_id'])['streetPoint']
+            where_coordinates = YandexAPI().get_coordinates(where_query)
+            if distance(float(es_poi_street_point[POI_KEYS.LATITUDE]), float(es_poi_street_point[POI_KEYS.LONGITUDE]), float(where_coordinates[POI_KEYS.LATITUDE]), float(where_coordinates[POI_KEYS.LONGITUDE])) < 10:
+                N = WEIGHT.STREET_NEAR_COOF
+            else:
+                N = WEIGHT.STREET_NOT_NEAR_COOF
+            poi = MongoDB().get_poi_by_id(item[POI_KEYS.ID])
+            fe_score = item[POI_KEYS.SCORE]
+            be_score = get_distance_real_weight(where_query, poi, N) + check_all_weight(what_query, poi)
+            print Decimal(fe_score).quantize(Decimal('1.00'))
+            print Decimal(be_score).quantize(Decimal('1.00'))
             self.assertAlmostEqual(Decimal(fe_score).quantize(Decimal('1.00')), Decimal(be_score).quantize(Decimal('1.00')), 1)
             print (time.time()-t)
 
@@ -48,5 +57,5 @@ class WeightTest(WTFBaseTest):
         items = SearchAPI().get_items(what_query, where_query)
         names = results_list_page.articles_names()
         names_list = [x.text for x in names]
-        item_names_list = [x['name'] for x in items]
+        item_names_list = [x[POI_KEYS.NAME] for x in items]
         self.assertListEqual(item_names_list, names_list)

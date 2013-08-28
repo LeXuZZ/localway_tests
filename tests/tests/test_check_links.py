@@ -292,7 +292,6 @@ class CheckLinksTest(WTFBaseTest):
                 '/html/body/div/section/section[2]/section/section/header/div[1]/h6/span').text)
             webdriver.back()
 
-
     def check_link_active(self, webelement, webdriver, expected_url):
         webelement.click()
         webdriver.implicitly_wait(20)

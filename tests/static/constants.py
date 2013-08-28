@@ -3,6 +3,7 @@ __author__ = 'lxz'
 
 
 class POI_KEYS():
+    ID = '_id'
     NAME = 'name'
     DESCRIPTION = 'description'
     INTRO = 'intro'
@@ -28,6 +29,8 @@ class POI_KEYS():
     LONGITUDE = 'lon'
     CHECK_IN_TIME = 'checkinTime'
     CHECK_OUT_TIME = 'checkoutTime'
+    SCORE = 'score'
+    HOTEL_STARS = 'hotelStars'
 
 class CONTACT_KEYS():
     PHONE = 'Телефон'
@@ -53,6 +56,9 @@ class URL_PREFIXES():
 class WEIGHT:
     SCORE_FOR_EXACT_MATCH = 1
     SCORE_FOR_LIKE_MATCH = 0.3
+
+    STREET_NOT_NEAR_COOF = 0.8
+    STREET_NEAR_COOF =  2.0
 
     ADDRESS_WEIGHT = 12
     NAME_WEIGHT = 10

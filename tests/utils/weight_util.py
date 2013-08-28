@@ -88,8 +88,8 @@ def get_distance_weight(where_query, poi):
         return 0
 
 
-def get_distance_real_weight(address, poi):
-    return Decimal(get_distance_weight(address, poi)*12).quantize(Decimal('1.00'))
+def get_distance_real_weight(address, poi, N):
+    return Decimal(get_distance_weight(address, poi)*12*Decimal(N)).quantize(Decimal('1.00'))
 
 
 def check_all_weight(what_query, poi):

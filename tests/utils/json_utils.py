@@ -7,6 +7,12 @@ from wtframework.wtf.config import ConfigReader
 __author__ = 'lxz'
 
 
+class ElasticSearchAPI():
+    def get_poi_json(self, poi_id):
+        response = requests.get('http://172.31.237.13:9200/pois/poi/' + poi_id)
+        return json.loads(response._content)['_source']
+
+
 class SearchAPI():
     def get_response_only_what(self, query):
         return requests.get('http://172.31.237.13:8080/search-api/query?what=' + query)
