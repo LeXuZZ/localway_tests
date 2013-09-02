@@ -1,7 +1,7 @@
 import unittest
 from tests.pages.poi_page import POIPage
 from tests.static.constants import URL_PREFIXES, TEST_POI_ID, POI_KEYS
-from tests.utils.data_utils import crop_first_zero_if_exist, convert_ms_to_HM, get_digits_from_string, get_image_id_from_src
+from tests.utils.data_utils import crop_first_zero_if_exist, convert_ms_to_HM, get_digits_from_string, get_image_id_from_src, get_time_from_check_info
 from tests.utils.json_utils import POI_JSON
 from wtframework.wtf.web.page import PageFactory
 from tests.utils.mongo_utils import MongoDB
@@ -70,8 +70,8 @@ class POIPageTest(WTFBaseTest):
         poi_page = PageFactory.create_page(POIPage, webdriver)
         hotel_stars_count_on_ui = get_digits_from_string(poi_page.hotel_stars().get_attribute('class'))
         self.assertEqual(hotel_stars_count_in_mongo, hotel_stars_count_on_ui, 'hotel stars count different')
-        self.assertEqual(checkin_time_in_mongo, poi_page.checkin_time().text)
-        self.assertEqual(checkout_time_in_mongo, poi_page.checkout_time().text)
+        self.assertEqual(checkin_time_in_mongo, get_time_from_check_info(poi_page.checkin_time().text))
+        self.assertEqual(checkout_time_in_mongo, get_time_from_check_info(poi_page.checkout_time().text))
 
     def test_hotel_stars_is_not_shown_and_check_io_is_shown(self):
         poi_without_hotel_stars_and_check_io = MongoDB().get_random_poi_with_hotel_stars_equals_0_and_check_io_gt_0()
@@ -83,9 +83,9 @@ class POIPageTest(WTFBaseTest):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(poi_id))
         webdriver.implicitly_wait(20)
         poi_page = PageFactory.create_page(POIPage, webdriver)
-        self.assertEqual('stars', poi_page.hotel_stars().get_attribute('class'))
-        self.assertEqual(checkin_time_in_mongo, poi_page.checkin_time().text)
-        self.assertEqual(checkout_time_in_mongo, poi_page.checkout_time().text)
+        self.assertEqual('stars s', poi_page.hotel_stars().get_attribute('class'))
+        self.assertEqual(checkin_time_in_mongo, get_time_from_check_info(poi_page.checkin_time().text))
+        self.assertEqual(checkout_time_in_mongo, get_time_from_check_info(poi_page.checkout_time().text))
 
     def test_image_gallery(self):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
@@ -97,6 +97,7 @@ class POIPageTest(WTFBaseTest):
         for i, poi_image_id in enumerate(poi[POI_KEYS.IMAGES]):
             self.assertEqual(poi_image_id, img_id())
             self.assertIn('active', poi_page.get_circles()[i].get_attribute('class'))
+            self.assertIn('active', poi_page.thumbnails_list()[i].get_attribute('class'))
             poi_page.gallery_next().click()
             webdriver.implicitly_wait(5)
 
@@ -106,6 +107,7 @@ class POIPageTest(WTFBaseTest):
             poi_page.gallery_previous().click()
             self.assertEqual(poi_image_id, img_id())
             self.assertIn('active', poi_page.get_circles()[i].get_attribute('class'))
+            self.assertIn('active', poi_page.thumbnails_list()[i].get_attribute('class'))
             webdriver.implicitly_wait(5)
 
         thumbnails_list = poi_page.thumbnails_list()
@@ -119,7 +121,21 @@ class POIPageTest(WTFBaseTest):
             poi_page.thumbnails_list()[i].click()
             webdriver.implicitly_wait(5)
             self.assertEqual(poi[POI_KEYS.IMAGES][i], img_id())
-        print '1'
+
+    def test_image_gallery_select_thumbnail__with_back(self):
+        img_id = lambda: get_image_id_from_src(poi_page.get_center_image().get_attribute('src'))
+        webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
+        webdriver.implicitly_wait(20)
+        poi = MongoDB().get_poi_by_id(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY)
+        poi_page = PageFactory.create_page(POIPage, webdriver)
+        poi_page.move_to_thumbnails()
+        poi_page.thumbnails_next().click()
+        poi_page.thumbnails_list()[7].click()
+        self.assertEqual(poi[POI_KEYS.IMAGES][7], img_id())
+        self.assertIn('active', poi_page.thumbnails_list()[7].get_attribute('class'))
+        poi_page.gallery_previous().click()
+        self.assertEqual(poi[POI_KEYS.IMAGES][6], img_id())
+        self.assertIn('active', poi_page.thumbnails_list()[6].get_attribute('class'))
 
 if __name__ == "__main__":
         unittest.main()

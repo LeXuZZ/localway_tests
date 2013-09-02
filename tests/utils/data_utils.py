@@ -119,10 +119,14 @@ def convert_working_time_from_poi(poi):
         if poi[POI_KEYS.AROUND_THE_CLOCK]:
             return u'Круглосуточно'
     for time in poi[POI_KEYS.WORK_TIME]:
-        time_from = crop_first_zero_if_exist(convert_ms_to_HM(time['timeFrom']))
-        time_to = crop_first_zero_if_exist(convert_ms_to_HM(time['timeTo']))
+        time_from = convert_ms_to_HM(time['timeFrom'])
+        time_to = convert_ms_to_HM(time['timeTo'])
         d.append((time_from + ' - ' + time_to).decode('utf-8'))
     return sorted(d)
+
+
+def convert_metro_station(metro_name):
+    return re.sub(u'м. ', '', metro_name)
 
 
 def convert_average_price_from_poi(poi):
@@ -211,3 +215,7 @@ def check_dropdown_menu_for_language(webelement, webdriver):
 
 def get_image_id_from_src(src):
     return re.search('/(\d+)_', src).group(1)
+
+
+def get_time_from_check_info(info):
+    return re.search('\d{2}:\d{2}', info).group(0)

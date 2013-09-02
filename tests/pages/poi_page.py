@@ -5,7 +5,7 @@ import urllib
 import urllib2
 from tests.pages.block_objects import HeaderBlock, FooterBlock, PhotoGallery
 from tests.static.constants import CONTACT_KEYS
-from tests.utils.data_utils import convert_cyrillic_url
+from tests.utils.data_utils import convert_cyrillic_url, convert_metro_station
 
 __author__ = 'lxz'
 
@@ -21,42 +21,33 @@ class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery):
 
 
     ### Page Elements Section ###
-    name = lambda self: self.webdriver.find_element_by_xpath("//span[@data-bind=\"poiName\"]")
-    categories = lambda self: self.webdriver.find_elements_by_xpath("//div[@data-bind=\"categories\"]/a")
-    rating_stars = lambda self: self.webdriver.find_element_by_xpath(
-        "/html/body/section/article/section[2]/section/header/div/span")
-    rating = lambda self: self.webdriver.find_element_by_xpath("//span[@data-bind=\"rating\"]")
-    address = lambda self: self.webdriver.find_element_by_xpath("//section[@class=\"poi-info\"]/div[@class=\"address\"]")
-    metro_stations = lambda self: self.webdriver.find_elements_by_xpath(
-        "//div[@data-bind=\"metroStations\"]//*[@data-bind=\"name\"]")
-    phones = lambda self: self.webdriver.find_elements_by_xpath("//ul[@data-bind=\"phones\"]")
-    emails = lambda self: self.webdriver.find_elements_by_xpath("//a[@data-bind=\"email\"]")
-    worktime = lambda self: self.webdriver.find_elements_by_xpath("//span[@data-bind=\"worktime\"]")
-    around_the_clock = lambda self: self.webdriver.find_element_by_xpath("//div[@data-bind=\"aroundTheClock\"]")
-    amenities = lambda self: self.webdriver.find_elements_by_xpath("//div[@data-bind=\"amenities\"]/div/a")
-    cuisines = lambda self: self.webdriver.find_elements_by_xpath("//div[@data-bind=\"cuisines\"]/div/a")
-    description = lambda self: self.webdriver.find_element_by_xpath("//p[@data-bind=\"description\"]")
-    intro = lambda self: self.webdriver.find_element_by_xpath("//h5[@data-bind=\"intro\"]")
+    name = lambda self: self.webdriver.find_element_by_id('poiName')
+    categories = lambda self: self.webdriver.find_elements_by_xpath('//div[@id="categories"]/a')
+    rating_stars = lambda self: self.webdriver.find_element_by_id('ratingStars')
+    rating = lambda self: self.webdriver.find_element_by_id('rating')
+    address = lambda self: self.webdriver.find_element_by_id('address')
+    metro_stations = lambda self: self.webdriver.find_elements_by_xpath('//strong[@data-bind="metroName"]')
+    phones = lambda self: self.webdriver.find_elements_by_xpath('//li[@data-bind="phone"]')
+    emails = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="email"]')
+    worktime = lambda self: self.webdriver.find_elements_by_xpath('//li[@data-bind="workTime"]/span[2]')
+    around_the_clock = lambda self: self.webdriver.find_element_by_id('aroundTheClock')
+    amenities = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="amenity"]')
+    cuisines = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="cuisine"]')
+    description = lambda self: self.webdriver.find_element_by_id('poiDescription')
+    intro = lambda self: self.webdriver.find_element_by_xpath('//h5[@data-bind="intro"]')
     # image = lambda self: self.webdriver.find_element_by_xpath("//img[@data-bind=\"galleryImage\"]")
-    payments = lambda self: self.webdriver.find_elements_by_xpath(
-        "//ul[@data-bind=\"payments\"]/li/span[@data-bind=\"link\"]")
-    contact_phones = lambda self: self.webdriver.find_elements_by_xpath(
-        "//div[@data-bind=\"contacts\"]/ul[@data-bind=\"phones\"]/li")
-    contact_emails = lambda self: self.webdriver.find_elements_by_xpath(
-        "//div[@data-bind=\"contacts\"]/ul[@data-bind=\"links\"]//*[@data-bind=\"email\"]")
-    contact_sites = lambda self: self.webdriver.find_elements_by_xpath(
-        "//div[@data-bind=\"contacts\"]/ul[@data-bind=\"links\"]//*[@data-bind=\"link\"]")
-    contact_social_links = lambda self: self.webdriver.find_elements_by_xpath(
-        "//div[@data-bind=\"contacts\"]/ul[@data-bind=\"social-links\"]/li/a")
-    average_price = lambda self: self.webdriver.find_element_by_xpath("//span[@data-bind=\"averagePrice\"]")
-    business_lunch = lambda self: self.webdriver.find_element_by_xpath("//span[@data-bind=\"businessLunchPrice\"]")
+    payments = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="paymentName"]')
+    contact_phones = lambda self: self.webdriver.find_elements_by_xpath('//li[@data-bind="phone"]')
+    contact_emails = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="email"]')
+    contact_sites = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="site-link"]')
+    contact_social_links = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="social-link"]')
+    average_price = lambda self: self.webdriver.find_element_by_xpath('//span[@data-bind="averagePrice"]')
+    business_lunch = lambda self: self.webdriver.find_element_by_xpath('//span[@data-bind="businessLunchPrice"]')
 
-    yandex_map = lambda self: self.webdriver.find_element_by_xpath(
-        "//section[@class=\"location\"]/div[@class=\"map\"]")
-    checkin_time = lambda self: self.webdriver.find_element_by_xpath("//span[@data-bind=\"checkinTime\"]")
-    checkout_time = lambda self: self.webdriver.find_element_by_xpath("//span[@data-bind=\"checkoutTime\"]")
-    hotel_stars = lambda self: self.webdriver.find_element_by_xpath(
-        "/html/body/section/article/section[2]/section/header/h2/span[2]")
+    yandex_map = lambda self: self.webdriver.find_element_by_xpath('//section[@class="location"]/div[@class="map"]')
+    checkin_time = lambda self: self.webdriver.find_element_by_xpath('//li[@data-bind="checkinTime"]')
+    checkout_time = lambda self: self.webdriver.find_element_by_xpath('//li[@data-bind="checkoutTime"]')
+    hotel_stars = lambda self: self.webdriver.find_element_by_id('hotelStars')
     ### End Page Elements Section ###
 
     def _validate_page(self, webdriver):
@@ -79,7 +70,7 @@ class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery):
 
     get_cuisines = lambda self: sorted([x.text for x in self.cuisines()])
     get_payments = lambda self: sorted([x.get_attribute('class') for x in self.payments()])
-    get_metro_stations = lambda self: sorted([x.text for x in self.metro_stations()])
+    get_metro_stations = lambda self: sorted([convert_metro_station(x.text) for x in self.metro_stations()])
     get_amenities = lambda self: sorted([x.text for x in self.amenities()])
     get_categories = lambda self: sorted([x.text for x in self.categories()])
 

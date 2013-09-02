@@ -50,3 +50,10 @@ class PhotoGallery():
 
     get_center_image = lambda self: self.get_images()[1]
 
+
+class ViewedTogether():
+    item_content_xpath = '//aside/section[3]/section/a/div'
+    vt_hotel_stars = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/span[1]')
+    vt_names = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/p')
+    vt_ratings = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/span[2]')
+    vt_category = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/span[3]')

@@ -2,7 +2,7 @@ import unittest
 from tests.pages.poi_page import POIPage
 from tests.static.constants import POI_KEYS, URL_PREFIXES
 from wtframework.wtf.testobjects.test_decorators import ddt, csvdata
-from tests.utils.data_utils import delete_newlines_for_description_and_intro, get_digits_from_string, create_address_from_poi, create_dict_for_contacts, convert_working_time_from_poi, convert_average_price_from_poi, convert_business_lunch_from_poi, get_image_id_from_src
+from tests.utils.data_utils import delete_newlines_for_description_and_intro, get_digits_from_string, create_address_from_poi, create_dict_for_contacts, convert_working_time_from_poi, convert_average_price_from_poi, convert_business_lunch_from_poi, get_image_id_from_src, convert_metro_station
 from wtframework.wtf.web.page import PageFactory
 from wtframework.wtf.config import ConfigReader
 from wtframework.wtf.testobjects.basetests import WTFBaseTest
