@@ -197,7 +197,9 @@ def check_oops_tooltip_position(webelement, webdriver):
 
 def check_dropdown_menu(webelement, webdriver, element_counter):
     # ActionChains(webdriver).move_to_element(webelement).click_and_hold(webelement)
+    ActionChains(webdriver).move_to_element(webelement).click().perform()
     webelement.click()
+    webdriver.implicitly_wait(5)
     dropdown = webdriver.find_element_by_xpath('//header/section[2]/ul/li[' + str(element_counter) + ']/div/ul')
     if dropdown.size['height'] > 0:
         return True

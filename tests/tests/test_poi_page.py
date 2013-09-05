@@ -28,7 +28,7 @@ class POIPageTest(WTFBaseTest):
     def test_yandex_map_existence_true_scenario(self):
         poi_id_with_yandex_map = MongoDB().get_random_poi_with_existing_coordinates()[POI_KEYS.ID]
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(poi_id_with_yandex_map))
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(10)
         poi_page = PageFactory.create_page(POIPage, webdriver)
         self.assertIsNotNone(POI_JSON(str(poi_id_with_yandex_map)).lat)
         self.assertIsNotNone(POI_JSON(str(poi_id_with_yandex_map)).lon)
@@ -37,7 +37,7 @@ class POIPageTest(WTFBaseTest):
     def test_yandex_map_existence_false_scenario(self):
         poi_id_without_yandex_map = MongoDB().get_random_poi_without_existing_coordinates()[POI_KEYS.ID]
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(poi_id_without_yandex_map))
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(10)
         poi_page = PageFactory.create_page(POIPage, webdriver)
         self.assertIsNone(POI_JSON(str(poi_id_without_yandex_map)).lat)
         self.assertIsNone(POI_JSON(str(poi_id_without_yandex_map)).lon)
@@ -46,14 +46,14 @@ class POIPageTest(WTFBaseTest):
     def test_cuisine_is_shown(self):
         random_poi_id_with_cuisines = MongoDB().get_random_poi_with_cuisines()[POI_KEYS.ID]
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(random_poi_id_with_cuisines))
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(10)
         poi_page = PageFactory.create_page(POIPage, webdriver)
         self.assertGreater(len(poi_page.cuisines()), 0, "block cuisines does not exist")
 
     def test_cuisine_is_not_shown(self):
         random_poi_id_without_cuisines = MongoDB().get_random_poi_without_cuisines()[POI_KEYS.ID]
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(random_poi_id_without_cuisines))
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(10)
         poi_page = PageFactory.create_page(POIPage, webdriver)
         self.assertEqual(len(poi_page.cuisines()), 0, "block cuisines does exist")
 
@@ -66,7 +66,7 @@ class POIPageTest(WTFBaseTest):
         checkout_time_in_mongo = crop_first_zero_if_exist(
             convert_ms_to_HM(poi_with_hotel_stars_and_check_io[POI_KEYS.CHECK_OUT_TIME]))
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(poi_id))
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(10)
         poi_page = PageFactory.create_page(POIPage, webdriver)
         hotel_stars_count_on_ui = get_digits_from_string(poi_page.hotel_stars().get_attribute('class'))
         self.assertEqual(hotel_stars_count_in_mongo, hotel_stars_count_on_ui, 'hotel stars count different')
@@ -81,7 +81,7 @@ class POIPageTest(WTFBaseTest):
         checkout_time_in_mongo = crop_first_zero_if_exist(
             convert_ms_to_HM(poi_without_hotel_stars_and_check_io[POI_KEYS.CHECK_OUT_TIME]))
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(poi_id))
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(10)
         poi_page = PageFactory.create_page(POIPage, webdriver)
         self.assertEqual('stars s', poi_page.hotel_stars().get_attribute('class'))
         self.assertEqual(checkin_time_in_mongo, get_time_from_check_info(poi_page.checkin_time().text))
@@ -89,7 +89,7 @@ class POIPageTest(WTFBaseTest):
 
     def test_image_gallery(self):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(10)
         img_id = lambda: get_image_id_from_src(poi_page.get_center_image().get_attribute('src'))
         poi = MongoDB().get_poi_by_id(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY)
         poi_page = PageFactory.create_page(POIPage, webdriver)
@@ -122,10 +122,10 @@ class POIPageTest(WTFBaseTest):
             webdriver.implicitly_wait(5)
             self.assertEqual(poi[POI_KEYS.IMAGES][i], img_id())
 
-    def test_image_gallery_select_thumbnail__with_back(self):
+    def test_image_gallery_select_thumbnail_with_back(self):
         img_id = lambda: get_image_id_from_src(poi_page.get_center_image().get_attribute('src'))
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(10)
         poi = MongoDB().get_poi_by_id(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY)
         poi_page = PageFactory.create_page(POIPage, webdriver)
         poi_page.move_to_thumbnails()
@@ -139,7 +139,7 @@ class POIPageTest(WTFBaseTest):
 
     def test_viewed_together_without_geo_data(self):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(10)
         vt_json = SearchAPI().get_viewed_together(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY)
         print '1'
 

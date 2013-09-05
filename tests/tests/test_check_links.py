@@ -268,7 +268,7 @@ class CheckLinksTest(WTFBaseTest):
                     element = WebDriverWait(webdriver, 10).until(lambda d: self.displayed(webdriver.find_element_by_xpath(link_xpath)))
                     element_count = get_digits_from_string(webdriver.find_element_by_xpath(link_xpath + '/following-sibling::span').text)
                     self.assertEqual(category['count'], int(element_count))
-                    self.check_section_category_link(element, webdriver, 'ng/#/result?categoryName=' + category['name'],
+                    self.check_section_category_link(element, webdriver, '#/result?categoryName=' + category['name'],
                                                      category['count'])
 
     def displayed(self, element):
@@ -289,7 +289,7 @@ class CheckLinksTest(WTFBaseTest):
             self.assertEqual(convert_cyrillic_url(webdriver.current_url),
                              ConfigReader('site_credentials').get("default_url") + expected_url)
             self.assertEqual(str(results_count), webdriver.find_element_by_xpath(
-                '/html/body/div/section/section[2]/section/section/header/div[1]/h6/span').text)
+                '/html/body/section/section/section[2]/section/section/header/div[1]/h6/span').text)
             webdriver.back()
 
     def check_link_active(self, webelement, webdriver, expected_url):

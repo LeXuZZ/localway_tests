@@ -18,7 +18,7 @@ class HeaderBlock():
     header_change_city_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[2]/div")
     header_register_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[4]")
     header_login_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[5]")
-    header_language_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[6]")
+    header_language_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[6]/div")
 
 
 class FooterBlock():
