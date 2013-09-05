@@ -42,16 +42,16 @@ class CONTACT_KEYS():
 
 
 class SECTION_LINKS_SUFFIX():
-    LEISURE = 'ng/#/section/leisure'
-    ACTIVE = 'ng/#/section/active'
-    RESTAURANTS = 'ng/#/section/restaurants'
-    HOTELS = 'ng/#/section/hotels'
-    JOURNEYS = 'ng/#/section/journeys'
+    LEISURE = '#/section/leisure'
+    ACTIVE = '#/section/active'
+    RESTAURANTS = '#/section/restaurants'
+    HOTELS = '#/section/hotels'
+    JOURNEYS = '#/section/journeys'
 
 
 class URL_PREFIXES():
     POI_ID_PREFIX = '#/poi?id='
-
+    HOME_PAGE_PREFIX = '#/'
 
 class WEIGHT:
     SCORE_FOR_EXACT_MATCH = 1

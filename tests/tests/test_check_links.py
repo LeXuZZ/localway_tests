@@ -158,7 +158,7 @@ class CheckLinksTest(WTFBaseTest):
         webdriver.implicitly_wait(20)
         results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
 
-        self.check_link_active(results_list_page.header_logo_link(), webdriver, '')
+        self.check_link_active(results_list_page.header_logo_link(), webdriver, URL_PREFIXES.HOME_PAGE_PREFIX)
         self.check_link_active(results_list_page.header_leisure_link(), webdriver, SECTION_LINKS_SUFFIX.LEISURE)
         self.check_link_active(results_list_page.header_active_link(), webdriver, SECTION_LINKS_SUFFIX.ACTIVE)
         self.check_link_active(results_list_page.header_restaurants_link(), webdriver, SECTION_LINKS_SUFFIX.RESTAURANTS)
@@ -177,7 +177,7 @@ class CheckLinksTest(WTFBaseTest):
         self.assertTrue(check_oops_tooltip_position(results_list_page.header_login_link(), webdriver),
                         'tooltip in other place')
 
-        self.check_link_active(results_list_page.footer_logo_link(), webdriver, '')
+        self.check_link_active(results_list_page.footer_logo_link(), webdriver, URL_PREFIXES.HOME_PAGE_PREFIX)
         self.check_link_active(results_list_page.footer_leisure_link(), webdriver, SECTION_LINKS_SUFFIX.LEISURE)
         self.check_link_active(results_list_page.footer_active_link(), webdriver, SECTION_LINKS_SUFFIX.ACTIVE)
         self.check_link_active(results_list_page.footer_restaurants_link(), webdriver, SECTION_LINKS_SUFFIX.RESTAURANTS)
@@ -190,7 +190,7 @@ class CheckLinksTest(WTFBaseTest):
         webdriver = self.set_up_with_suffix(SECTION_LINKS_SUFFIX.LEISURE)
         leisure_section_page = PageFactory.create_page(LeisureSectionPage, webdriver)
 
-        self.check_link_active(leisure_section_page.header_logo_link(), webdriver, '')
+        self.check_link_active(leisure_section_page.header_logo_link(), webdriver, URL_PREFIXES.HOME_PAGE_PREFIX)
         self.check_link_active(leisure_section_page.header_active_link(), webdriver, SECTION_LINKS_SUFFIX.ACTIVE)
         self.check_link_active(leisure_section_page.header_leisure_link(), webdriver, SECTION_LINKS_SUFFIX.LEISURE)
         self.check_link_active(leisure_section_page.header_restaurants_link(), webdriver,
@@ -210,7 +210,7 @@ class CheckLinksTest(WTFBaseTest):
         self.assertTrue(check_oops_tooltip_position(leisure_section_page.header_login_link(), webdriver),
                         'tooltip in other place')
 
-        self.check_link_active(leisure_section_page.footer_logo_link(), webdriver, '')
+        self.check_link_active(leisure_section_page.footer_logo_link(), webdriver, URL_PREFIXES.HOME_PAGE_PREFIX)
         self.check_link_active(leisure_section_page.footer_leisure_link(), webdriver, SECTION_LINKS_SUFFIX.LEISURE)
         self.check_link_active(leisure_section_page.footer_active_link(), webdriver, SECTION_LINKS_SUFFIX.ACTIVE)
         self.check_link_active(leisure_section_page.footer_restaurants_link(), webdriver,
@@ -224,7 +224,7 @@ class CheckLinksTest(WTFBaseTest):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + '172880af0000000000000000')
         poi_page = PageFactory.create_page(POIPage, webdriver)
 
-        self.check_link_active(poi_page.header_logo_link(), webdriver, '')
+        self.check_link_active(poi_page.header_logo_link(), webdriver, URL_PREFIXES.HOME_PAGE_PREFIX)
         self.check_link_active(poi_page.header_leisure_link(), webdriver, SECTION_LINKS_SUFFIX.LEISURE)
         self.check_link_active(poi_page.header_active_link(), webdriver, SECTION_LINKS_SUFFIX.ACTIVE)
         self.check_link_active(poi_page.header_restaurants_link(), webdriver, SECTION_LINKS_SUFFIX.RESTAURANTS)
@@ -242,7 +242,7 @@ class CheckLinksTest(WTFBaseTest):
                         'tooltip in other place')
         self.assertTrue(check_oops_tooltip_position(poi_page.header_login_link(), webdriver), 'tooltip in other place')
 
-        self.check_link_active(poi_page.footer_logo_link(), webdriver, '')
+        self.check_link_active(poi_page.footer_logo_link(), webdriver, URL_PREFIXES.HOME_PAGE_PREFIX)
         self.check_link_active(poi_page.footer_leisure_link(), webdriver, SECTION_LINKS_SUFFIX.LEISURE)
         self.check_link_active(poi_page.footer_active_link(), webdriver, SECTION_LINKS_SUFFIX.ACTIVE)
         self.check_link_active(poi_page.footer_restaurants_link(), webdriver, SECTION_LINKS_SUFFIX.RESTAURANTS)
@@ -255,13 +255,13 @@ class CheckLinksTest(WTFBaseTest):
         webdriver = self.set_up_with_suffix(SECTION_LINKS_SUFFIX.LEISURE)
         found_count = SectionAPI().get_sections()
         for meta_section in found_count:
-            print '' + meta_section['name']
+            # print '' + meta_section['name']
             webdriver.find_element_by_xpath(
-                "//span[@class=\"ng-binding\" and text()=\"" + meta_section['name'] + "\"]").click()
+                '//span[@class="ng-binding" and text()="' + meta_section['name'] + "\"]").click()
             for section in meta_section['sections']:
-                print '     ' + section['name']
+                # print '     ' + section['name']
                 for category in section['categories']:
-                    print '         ' + category['name']
+                    # print '         ' + category['name']
                     link_xpath = "//*[contains(@class,\'ng-scope ng-binding\') and contains(text(),\'" + category[
                             'name'] + "\')]"
                     # element = webdriver.find_element_by_xpath(link_xpath)

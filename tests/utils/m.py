@@ -1,13 +1,10 @@
 # coding=utf-8
 from tests.utils.json_utils import SectionAPI
+from tests.utils.mongo_utils import MongoDB
 
-found_count = SectionAPI().get_sections()
-for super_section in found_count:
-    print '' + super_section['name']
-    for section in super_section['sections']:
-        print '     ' + section['name']
-        for category in section['categories']:
-            print '         ' + category['name']
+for i in range(50):
+    poi = MongoDB().get_random_poi()
+    print poi['_id']
 
 
 # //span[@class="ng-binding" and text()="События"]

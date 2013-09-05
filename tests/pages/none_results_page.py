@@ -28,11 +28,11 @@ class NoneResultsList(PageObject, HeaderBlock, FooterBlock):
             raise InvalidPageError('This page did not pass NoneResultsListPage page validation.')
 
     def check_text_presence(self):
-        if not u'Вы искали' in self.webdriver.find_element_by_xpath('/html/body/div/section/section/h2').text:
+        if not u'Вы искали' in self.webdriver.find_element_by_xpath('/html/body/section/section/section/h2').text:
             raise InvalidPageError('This page did not pass NoneResultsListPage page validation.')
-        if not u'0 Результатов' in self.webdriver.find_element_by_xpath('html/body/div/section/section/div/h2').text:
+        if not u'0 Результатов' in self.webdriver.find_element_by_xpath('html/body/section/section/section/div/h2').text:
             raise InvalidPageError('This page did not pass NoneResultsListPage page validation.')
-        if not u'К сожалению, по Вашему запросу ничего не найдено.' in self.webdriver.find_element_by_xpath('html/body/div/section/section/div/p[1]').text:
+        if not u'К сожалению, по Вашему запросу ничего не найдено.' in self.webdriver.find_element_by_xpath('html/body/section/section/section/div/p[1]').text:
             raise InvalidPageError('This page did not pass NoneResultsListPage page validation.')
-        if not u'Возможно, вы допустили ошибку в слове, исправьте ее и попробуйте найти снова.' in self.webdriver.find_element_by_xpath('html/body/div/section/section/div/p[2]').text:
+        if not u'Возможно, вы допустили ошибку в слове, исправьте ее и попробуйте найти снова.' in self.webdriver.find_element_by_xpath('html/body/section/section/section/div/p[2]').text:
             raise InvalidPageError('This page did not pass NoneResultsListPage page validation.')

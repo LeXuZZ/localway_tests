@@ -32,7 +32,7 @@ class ResultsPageTest(WTFBaseTest):
         self.assertEqual('0', found_count)
         home_page.search_for_where(query)
         home_page.click_search_button()
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(5)
         none_results_page = PageFactory.create_page(NoneResultsList, webdriver)
         none_results_page.check_text_presence()
 
@@ -44,7 +44,7 @@ class ResultsPageTest(WTFBaseTest):
                            'Need to change the What query')
         home_page.search_for_what(query)
         home_page.click_search_button()
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(5)
         results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
         self.assertTrue(results_list_page.pagination_panel().is_displayed())
 
@@ -56,7 +56,7 @@ class ResultsPageTest(WTFBaseTest):
                              'Need to change the What query')
         home_page.search_for_what(query)
         home_page.click_search_button()
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(5)
         results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
         self.assertFalse(results_list_page.pagination_panel().is_displayed())
 
@@ -65,7 +65,7 @@ class ResultsPageTest(WTFBaseTest):
         home_page = PageFactory.create_page(HomePage, webdriver)
         home_page.search_for_what(u"Бар")
         home_page.click_search_button()
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(5)
         results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
         self.assertGreater(len(results_list_page.articles()), 1)
 
@@ -74,7 +74,7 @@ class ResultsPageTest(WTFBaseTest):
         home_page = PageFactory.create_page(HomePage, webdriver)
         home_page.search_for_what(u"Бар")
         home_page.search_what_input().send_keys(Keys.RETURN)
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(5)
         results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
         self.assertGreater(len(results_list_page.articles()), 1)
 
@@ -83,7 +83,7 @@ class ResultsPageTest(WTFBaseTest):
         home_page = PageFactory.create_page(HomePage, webdriver)
         home_page.search_for_where(u"Москва")
         home_page.search_where_input().send_keys(Keys.RETURN)
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(5)
         results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
         self.assertGreater(len(results_list_page.articles()), 1)
 
@@ -92,7 +92,7 @@ class ResultsPageTest(WTFBaseTest):
         home_page = PageFactory.create_page(HomePage, webdriver)
         home_page.search_for_what(u"Бар")
         home_page.search_where_input().send_keys(Keys.RETURN)
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(5)
         results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
         self.assertGreater(len(results_list_page.articles()), 1)
 
@@ -104,7 +104,7 @@ class ResultsPageTest(WTFBaseTest):
         self.assertGreater(found_count, 0)
         home_page.search_for_where(query)
         home_page.click_search_button()
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(5)
         results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
         self.assertGreater(len(results_list_page.articles()), 1, 'POI list is empty')
 

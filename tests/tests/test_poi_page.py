@@ -2,7 +2,7 @@ import unittest
 from tests.pages.poi_page import POIPage
 from tests.static.constants import URL_PREFIXES, TEST_POI_ID, POI_KEYS
 from tests.utils.data_utils import crop_first_zero_if_exist, convert_ms_to_HM, get_digits_from_string, get_image_id_from_src, get_time_from_check_info
-from tests.utils.json_utils import POI_JSON
+from tests.utils.json_utils import POI_JSON, SearchAPI
 from wtframework.wtf.web.page import PageFactory
 from tests.utils.mongo_utils import MongoDB
 from wtframework.wtf.config import ConfigReader
@@ -136,6 +136,14 @@ class POIPageTest(WTFBaseTest):
         poi_page.gallery_previous().click()
         self.assertEqual(poi[POI_KEYS.IMAGES][6], img_id())
         self.assertIn('active', poi_page.thumbnails_list()[6].get_attribute('class'))
+
+    def test_viewed_together_without_geo_data(self):
+        webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
+        webdriver.implicitly_wait(20)
+        vt_json = SearchAPI().get_viewed_together(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY)
+        print '1'
+
+
 
 if __name__ == "__main__":
         unittest.main()

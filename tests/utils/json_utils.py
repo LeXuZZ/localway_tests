@@ -18,7 +18,7 @@ class SearchAPI():
         return requests.get('http://172.31.237.13:8080/search-api/query?what=' + query)
 
     def get_response(self, what, where, page_size='25'):
-        return requests.get('http://172.31.237.12/search-api/query?sort=wordScore&sort.dir=desc&what=' + what + '&where=' + where + '&pageSize=' + page_size)
+        return requests.get('http://172.31.237.13:8080/search-api/query?sort=wordScore&sort.dir=desc&what=' + what + '&where=' + where + '&pageSize=' + page_size)
 
     def get_count_on_page(self, query):
         response = self.get_response_only_what(query)
@@ -31,6 +31,10 @@ class SearchAPI():
     def get_items(self, what, where):
         response = self.get_response(what, where)
         return json.loads(response._content)['items']
+
+    def get_viewed_together(self, poi_id):
+        response = requests.get('http://172.31.237.13:8080/search-api/viewedTogether?excludeId=' + poi_id)
+        return json.loads(response._content)
 
 
 class YandexAPI():

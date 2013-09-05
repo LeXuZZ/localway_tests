@@ -12,3 +12,7 @@
 .idea/workspace.xml
 .idea/wtframework.iml
 reports/reports.xml
+reports/results.xml
+reference-screenshots/
+screenshots/
+Test Results*

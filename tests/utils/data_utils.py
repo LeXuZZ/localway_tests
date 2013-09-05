@@ -91,11 +91,11 @@ def create_address_from_poi(poi):
     if POI_KEYS.CITY in poi:
         address += MongoDB().convert_city_id_to_name(poi[POI_KEYS.CITY]).encode('utf-8')
     if POI_KEYS.STREET in poi:
-        address += ', ' + 'ул. ' + poi[POI_KEYS.STREET].encode('utf-8')
+        address += ' ' + 'ул. ' + delete_whitespace_edges(poi[POI_KEYS.STREET].encode('utf-8'))
     if POI_KEYS.HOUSE in poi:
-        address += ', ' + 'д. ' + poi[POI_KEYS.HOUSE].encode('utf-8')
+        address += ' ' + 'д. ' + delete_whitespace_edges(poi[POI_KEYS.HOUSE].encode('utf-8'))
     if POI_KEYS.BUILDING in poi:
-        address += ', ' + poi[POI_KEYS.BUILDING].encode('utf-8')
+        address += ' ' + delete_whitespace_edges(poi[POI_KEYS.BUILDING].encode('utf-8'))
     return unicode(address, 'utf-8')
 
 
@@ -105,11 +105,11 @@ def create_dict_for_contacts(poi):
         contact_key = MongoDB().convert_contact_type_id_to_name(contact[POI_KEYS.CONTACT_TYPE]).encode('utf-8')
         # d[contact_key].append(delete_whitespace_edges(contact[POI_KEYS.CONTACT]) if ('http://' in contact[POI_KEYS.CONTACT]) or (contact_key == 'Телефон' or contact_key == 'EMail') else 'http://' + delete_whitespace_edges(contact[POI_KEYS.CONTACT]))
         if ('http://' in contact[POI_KEYS.CONTACT]) or (contact_key == 'Телефон' or contact_key == 'EMail'):
-            d[contact_key].append(delete_whitespace_edges(contact[POI_KEYS.CONTACT]))
+            d[contact_key].append(convert_cyrillic_url(delete_whitespace_edges(contact[POI_KEYS.CONTACT])))
         elif ('https://' in contact[POI_KEYS.CONTACT]) or (contact_key == 'Телефон' or contact_key == 'EMail'):
-            d[contact_key].append(delete_whitespace_edges(contact[POI_KEYS.CONTACT]))
+            d[contact_key].append(convert_cyrillic_url(delete_whitespace_edges(contact[POI_KEYS.CONTACT])))
         else:
-            d[contact_key].append('http://' + delete_whitespace_edges(contact[POI_KEYS.CONTACT]))
+            d[contact_key].append('http://' + convert_cyrillic_url(delete_whitespace_edges(contact[POI_KEYS.CONTACT])))
     return d
 
 
@@ -119,8 +119,8 @@ def convert_working_time_from_poi(poi):
         if poi[POI_KEYS.AROUND_THE_CLOCK]:
             return u'Круглосуточно'
     for time in poi[POI_KEYS.WORK_TIME]:
-        time_from = convert_ms_to_HM(time['timeFrom'])
-        time_to = convert_ms_to_HM(time['timeTo'])
+        time_from = crop_first_zero_if_exist(convert_ms_to_HM(time['timeFrom']))
+        time_to = crop_first_zero_if_exist(convert_ms_to_HM(time['timeTo']))
         d.append((time_from + ' - ' + time_to).decode('utf-8'))
     return sorted(d)
 
@@ -142,11 +142,11 @@ def convert_business_lunch_from_poi(poi):
         return u''
     else:
         if poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] in '':
-            d += (u'до ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE])
+            d += (u'до ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE] + u' р.')
         if poi[POI_KEYS.BUSINESS_LUNCH_PRICE][1] in '':
-            d += (u'от ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0])
+            d += (u'от ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] + u' р.')
         if poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] and poi[POI_KEYS.BUSINESS_LUNCH_PRICE][1] not in '':
-            d += (poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] + ' - ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE][1])
+            d += (poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] + ' - ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE][1] + u' р.')
     return d
 
 
@@ -219,3 +219,7 @@ def get_image_id_from_src(src):
 
 def get_time_from_check_info(info):
     return re.search('\d{2}:\d{2}', info).group(0)
+
+
+def get_name_from_auto_suggestion(info):
+    return re.search('(.*)\n', info).group(1)

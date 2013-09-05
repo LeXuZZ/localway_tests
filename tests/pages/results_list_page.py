@@ -8,26 +8,26 @@ __author__ = 'lxz'
 class ResultsListPage(PageObject, HeaderBlock, FooterBlock):
 
 
-    articles_xpath = '//section[@class=\"result-items\"]/article'
-    name_xpath_pref = '/div/section/a/h4'
+    articles_xpath = '//section[@class="result-items"]/a/div[1]'
+    name_xpath_pref = '/section/span/h4'
     ### Page Elements Section ###
-    categories_checked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[1]/div/ul[1]/li")
-    categories_unchecked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[1]/div/ul[2]/li")
+    categories_checked = lambda self: self.webdriver.find_elements_by_xpath('//aside/section[1]/div/ul[1]/li')
+    categories_unchecked = lambda self: self.webdriver.find_elements_by_xpath('//aside/section[1]/div/ul[2]/li')
     # category_filter_list = lambda self: self.webdriver.find_element_by_xpath("//aside/section[1]/div/ul[1]/li")
-    amenities_checked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[2]/div/ul[1]/li")
-    amenities_unchecked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[2]/div/ul[2]/li")
+    amenities_checked = lambda self: self.webdriver.find_elements_by_xpath('//aside/section[2]/div/ul[1]/li')
+    amenities_unchecked = lambda self: self.webdriver.find_elements_by_xpath('//aside/section[2]/div/ul[2]/li')
     # amenity_filter_list = lambda self: self.webdriver.find_element_by_class_name("amenity_filter_list")
-    cuisines_checked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[3]/div/ul[1]/li")
-    cuisines_unchecked = lambda self: self.webdriver.find_elements_by_xpath("//aside/section[3]/div/ul[2]/li")
+    cuisines_checked = lambda self: self.webdriver.find_elements_by_xpath('//aside/section[3]/div/ul[1]/li')
+    cuisines_unchecked = lambda self: self.webdriver.find_elements_by_xpath('//aside/section[3]/div/ul[2]/li')
     # cuisine_filter_list = lambda self: self.webdriver.find_element_by_class_name("cuisine_filter_list")
-    district_filter_list = lambda self: self.webdriver.find_element_by_class_name("district_filter_list")
-    metro_station_filter_list = lambda self: self.webdriver.find_element_by_class_name("metro_station_filter_list")
-    schedule_filter_list = lambda self: self.webdriver.find_element_by_class_name("schedule_filter_list")
-    search_what_input = lambda self: self.webdriver.find_element_by_xpath("/html/body/div/form/input")
-    search_where_input = lambda self: self.webdriver.find_element_by_xpath("/html/body/div/form/input[2]")
-    search_button = lambda self: self.webdriver.find_element_by_xpath("/html/body/div/form/button")
-    poi_place_holder = lambda self: self.webdriver.find_element_by_class_name("poi_placeholder")
-    poi_list = lambda self: self.webdriver.find_element_by_xpath("//section[@class=\"result-items\"]")
+    district_filter_list = lambda self: self.webdriver.find_element_by_class_name('district_filter_list')
+    metro_station_filter_list = lambda self: self.webdriver.find_element_by_class_name('metro_station_filter_list')
+    schedule_filter_list = lambda self: self.webdriver.find_element_by_class_name('schedule_filter_list')
+    search_what_input = lambda self: self.webdriver.find_element_by_xpath('/html/body/div/form/input')
+    search_where_input = lambda self: self.webdriver.find_element_by_xpath('/html/body/div/form/input[2]')
+    search_button = lambda self: self.webdriver.find_element_by_xpath('/html/body/div/form/button')
+    poi_place_holder = lambda self: self.webdriver.find_element_by_class_name('poi_placeholder')
+    poi_list = lambda self: self.webdriver.find_element_by_xpath('//section[@class="result-items"]')
     articles = lambda self: self.webdriver.find_elements_by_xpath(self.articles_xpath)
     articles_names = lambda self: self.webdriver.find_elements_by_xpath(self.articles_xpath + self.name_xpath_pref)
     pagination_panel = lambda self: self.webdriver.find_element_by_class_name("pagination")

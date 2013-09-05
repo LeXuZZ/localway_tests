@@ -35,7 +35,7 @@ class DDTPOIPageTest(WTFBaseTest):
     def test_complex_check_poi_page(self, paramater_dic):
         poi = MongoDB().get_poi_by_id(paramater_dic['poi_id'])
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + paramater_dic['poi_id'])
-        webdriver.implicitly_wait(20)
+        webdriver.implicitly_wait(3)
         poi_page = PageFactory.create_page(POIPage, webdriver)
             #check name
         if POI_KEYS.NAME in poi.keys():

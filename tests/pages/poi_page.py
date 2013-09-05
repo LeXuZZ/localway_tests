@@ -34,7 +34,7 @@ class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery):
     amenities = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="amenity"]')
     cuisines = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="cuisine"]')
     description = lambda self: self.webdriver.find_element_by_id('poiDescription')
-    intro = lambda self: self.webdriver.find_element_by_xpath('//h5[@data-bind="intro"]')
+    intro = lambda self: self.webdriver.find_element_by_id('intro')
     # image = lambda self: self.webdriver.find_element_by_xpath("//img[@data-bind=\"galleryImage\"]")
     payments = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="paymentName"]')
     contact_phones = lambda self: self.webdriver.find_elements_by_xpath('//li[@data-bind="phone"]')
@@ -42,7 +42,7 @@ class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery):
     contact_sites = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="site-link"]')
     contact_social_links = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="social-link"]')
     average_price = lambda self: self.webdriver.find_element_by_xpath('//span[@data-bind="averagePrice"]')
-    business_lunch = lambda self: self.webdriver.find_element_by_xpath('//span[@data-bind="businessLunchPrice"]')
+    business_lunch = lambda self: self.webdriver.find_element_by_xpath('//li[@data-bind="businessLunchPrice"]')
 
     yandex_map = lambda self: self.webdriver.find_element_by_xpath('//section[@class="location"]/div[@class="map"]')
     checkin_time = lambda self: self.webdriver.find_element_by_xpath('//li[@data-bind="checkinTime"]')
