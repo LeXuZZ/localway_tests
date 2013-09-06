@@ -88,13 +88,13 @@ def delete_whitespace_edges(string):
 
 def create_address_from_poi(poi):
     address = ''
-    if POI_KEYS.CITY in poi:
+    if POI_KEYS.CITY in poi and poi[POI_KEYS.CITY] is not u'':
         address += MongoDB().convert_city_id_to_name(poi[POI_KEYS.CITY]).encode('utf-8')
-    if POI_KEYS.STREET in poi:
+    if POI_KEYS.STREET in poi and poi[POI_KEYS.STREET] is not u'':
         address += ' ' + 'ул. ' + delete_whitespace_edges(poi[POI_KEYS.STREET].encode('utf-8'))
-    if POI_KEYS.HOUSE in poi:
+    if POI_KEYS.HOUSE in poi and poi[POI_KEYS.HOUSE] is not u'':
         address += ' ' + 'д. ' + delete_whitespace_edges(poi[POI_KEYS.HOUSE].encode('utf-8'))
-    if POI_KEYS.BUILDING in poi:
+    if POI_KEYS.BUILDING in poi and poi[POI_KEYS.BUILDING] is not u'':
         address += ' ' + delete_whitespace_edges(poi[POI_KEYS.BUILDING].encode('utf-8'))
     return unicode(address, 'utf-8')
 
@@ -167,15 +167,15 @@ def convert_cyrillic_url(url):
 
 
 def get_center_of_webelement(webelement):
-    return [webelement.size['width']/2, webelement.size['height']/2]
+    return [webelement.size['width'] / 2, webelement.size['height'] / 2]
 
 
 def get_top_center_of_webelement(webelement):
-    return [webelement.size['width']/2, 0]
+    return [webelement.size['width'] / 2, 0]
 
 
 def get_bottom_center_of_webelement(webelement):
-    return [webelement.size['width']/2, webelement.size['height']]
+    return [webelement.size['width'] / 2, webelement.size['height']]
 
 
 def get_global_position(webelement, point):
@@ -225,3 +225,21 @@ def get_time_from_check_info(info):
 
 def get_name_from_auto_suggestion(info):
     return re.search('(.*)\n', info).group(1)
+
+
+def create_stub_data_for_autosuggestion():
+    suggestion = defaultdict(list)
+    suggestion['categories'].append(u'Веганский ресторан')
+    suggestion['categories'].append(u'Вегатарианский ресторан')
+    suggestion['categories'].append(u'Ресторан')
+    suggestion['categories'].append(u'Ресторанный дворик')
+    suggestion['categories'].append(u'Рыбный ресторан')
+
+    suggestion['pois'].append({'address': u'Певческий пер, 6', 'name': u'Экспедиция. Ресторан', 'rating': u'5',
+                               'bolded_name': u'Рест'})
+    suggestion['pois'].append(
+        {'address': u'Ленинградское шоссе, 16а ст4', 'name': u'Чемпион. Ресторан и бар', 'rating': u'4',
+         'bolded_name': u'Рест'})
+    suggestion['pois'].append({'address': u'Мира проспект, 91 корпус 3', 'name': u'Океан. Ресторан', 'rating': u'3',
+                               'bolded_name': u'Рест'})
+    return suggestion

@@ -1,7 +1,7 @@
 # coding=utf-8
 import unittest
 from tests.pages.home_page import HomePage
-from tests.utils.data_utils import get_name_from_auto_suggestion
+from tests.utils.data_utils import get_name_from_auto_suggestion, create_stub_data_for_autosuggestion
 from wtframework.wtf.web.page import PageFactory
 from wtframework.wtf.config import ConfigReader
 from wtframework.wtf.testobjects.basetests import WTFBaseTest
@@ -59,18 +59,11 @@ class HomePageTest(WTFBaseTest):
     def test_auto_suggestion(self):
         webdriver = self.set_up()
         home_page = PageFactory.create_page(HomePage, webdriver)
-        home_page.search_for_what(u'ф')
-        webdriver.implicitly_wait(3)
-        addresses = webdriver.find_elements_by_xpath('//span[@data-bind="as-poi-address"]')
-        ratings = webdriver.find_elements_by_xpath('//span[@data-bind="as-poi-rating"]')
-        names = webdriver.find_elements_by_xpath('//p[@data-bind="as-poi-name"]')
-        s_names = webdriver.find_elements_by_xpath('//p[@data-bind="as-poi-name"]/strong')
-        categories = webdriver.find_elements_by_xpath('//li[@data-bind="as-category-name"]/a')
-        aa = [x.text for x in addresses]
-        nn = [get_name_from_auto_suggestion(x.text) for x in names]
-        rr = [x.get_attribute('class') for x in ratings]
-        ss = [x.text for x in s_names]
-        cc = [x.text for x in categories]
+        home_page.search_for_what(u'рест')
+        webdriver.implicitly_wait(5)
+        suggestion_from_page = home_page.get_autosuggestion()
+        stub_data = create_stub_data_for_autosuggestion()
+        self.assertEqual(suggestion_from_page, stub_data)
         print '1'
 
 if __name__ == "__main__":

@@ -140,7 +140,8 @@ class POIPageTest(WTFBaseTest):
     def test_viewed_together_without_geo_data(self):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
         webdriver.implicitly_wait(10)
-        vt_json = SearchAPI().get_viewed_together(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY)
+        poi_page = PageFactory.create_page(POIPage, webdriver)
+
         print '1'
 
 

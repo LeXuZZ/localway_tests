@@ -39,7 +39,7 @@ class SearchAPI():
 
 class YandexAPI():
     def get_response_from_api(self, query):
-        response = requests.get(re.sub('WHERE', query, YANDEX_MAPS_API_REQUESTS.POI_COORDINATES))
+        response = requests.get(YANDEX_MAPS_API_REQUESTS.POI_COORDINATES.format(query))
         if response.status_code == 200:
             return response
         else:

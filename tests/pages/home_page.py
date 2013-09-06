@@ -1,12 +1,12 @@
 import re
-from tests.pages.block_objects import HeaderBlock, FooterBlock
+from tests.pages.block_objects import HeaderBlock, FooterBlock, AutoSuggestion
 
 __author__ = 'lxz'
 
 from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 
-class HomePage(PageObject, HeaderBlock, FooterBlock):
+class HomePage(PageObject, HeaderBlock, FooterBlock, AutoSuggestion):
 
 
     ### Page Elements Section ###

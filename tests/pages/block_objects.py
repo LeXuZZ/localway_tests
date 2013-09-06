@@ -1,37 +1,39 @@
+from collections import defaultdict
 from selenium.webdriver import ActionChains
+from tests.utils.data_utils import get_name_from_auto_suggestion, get_digits_from_string
 
 __author__ = 'lxz'
 
 
 class HeaderBlock():
 
-    header_leisure_link = lambda self: self.webdriver.find_element_by_xpath("//header/section/nav/a[1]")
-    header_active_link = lambda self: self.webdriver.find_element_by_xpath("//header/section/nav/a[2]")
-    header_restaurants_link = lambda self: self.webdriver.find_element_by_xpath("//header/section/nav/a[3]")
-    header_hotels_link = lambda self: self.webdriver.find_element_by_xpath("//header/section/nav/a[4]")
-    header_events_link = lambda self: self.webdriver.find_element_by_xpath("//header/section/nav/a[5]")
-    header_journeys_link = lambda self: self.webdriver.find_element_by_xpath("//header/section/nav/a[6]")
-    header_around_link = lambda self: self.webdriver.find_element_by_xpath("//header/section/nav/a[7]")
-    header_more_link = lambda self: self.webdriver.find_element_by_xpath("//header/section/nav/a[8]")
+    header_leisure_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[1]')
+    header_active_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[2]')
+    header_restaurants_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[3]')
+    header_hotels_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[4]')
+    header_events_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[5]')
+    header_journeys_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[6]')
+    header_around_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[7]')
+    header_more_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[8]')
 
-    header_logo_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[1]/a")
-    header_change_city_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[2]/div")
-    header_register_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[4]")
-    header_login_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[5]")
-    header_language_link = lambda self: self.webdriver.find_element_by_xpath("//header/section[2]/ul/li[6]/div")
+    header_logo_link = lambda self: self.webdriver.find_element_by_xpath('//header/section[2]/ul/li[1]/a')
+    header_change_city_link = lambda self: self.webdriver.find_element_by_xpath('//header/section[2]/ul/li[2]/div')
+    header_register_link = lambda self: self.webdriver.find_element_by_xpath('//header/section[2]/ul/li[4]')
+    header_login_link = lambda self: self.webdriver.find_element_by_xpath('//header/section[2]/ul/li[5]')
+    header_language_link = lambda self: self.webdriver.find_element_by_xpath('//header/section[2]/ul/li[6]/div')
 
 
 class FooterBlock():
 
-    footer_leisure_link = lambda self: self.webdriver.find_element_by_xpath("//footer/section/nav/a[1]")
-    footer_active_link = lambda self: self.webdriver.find_element_by_xpath("//footer/section/nav/a[2]")
-    footer_restaurants_link = lambda self: self.webdriver.find_element_by_xpath("//footer/section/nav/a[3]")
-    footer_hotels_link = lambda self: self.webdriver.find_element_by_xpath("//footer/section/nav/a[4]")
-    footer_events_link = lambda self: self.webdriver.find_element_by_xpath("//footer/section/nav/a[5]")
-    footer_journeys_link = lambda self: self.webdriver.find_element_by_xpath("//footer/section/nav/a[6]")
-    footer_around_link = lambda self: self.webdriver.find_element_by_xpath("//footer/section/nav/a[7]")
+    footer_leisure_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[1]')
+    footer_active_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[2]')
+    footer_restaurants_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[3]')
+    footer_hotels_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[4]')
+    footer_events_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[5]')
+    footer_journeys_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[6]')
+    footer_around_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[7]')
 
-    footer_logo_link = lambda self: self.webdriver.find_element_by_xpath("//footer/section[2]/a")
+    footer_logo_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section[2]/a')
 
 
 class PhotoGallery():
@@ -57,3 +59,25 @@ class ViewedTogether():
     vt_names = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/p')
     vt_ratings = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/span[2]')
     vt_category = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/span[3]')
+
+
+class AutoSuggestion():
+    as_addresses = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="as-poi-address"]')
+    as_ratings = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="as-poi-rating"]')
+    as_names = lambda self: self.webdriver.find_elements_by_xpath('//p[@data-bind="as-poi-name"]')
+    as_bolded_names = lambda self: self.webdriver.find_elements_by_xpath('//p[@data-bind="as-poi-name"]/strong')
+    as_categories = lambda self: self.webdriver.find_elements_by_xpath('//li[@data-bind="as-category-name"]/a')
+
+    def get_autosuggestion(self):
+        suggestion = defaultdict(list)
+        categories = self.as_categories()
+        addresses = [x.text for x in self.as_addresses()]
+        names = [get_name_from_auto_suggestion(x.text) for x in self.as_names()]
+        ratings = [x.get_attribute('class') for x in self.as_ratings()]
+        bolded_names = [x.text for x in self.as_bolded_names()]
+        for i in range(len(names)):
+            poi_info = {'address': addresses[i], 'name': names[i], 'rating': get_digits_from_string(ratings[i]),
+                        'bolded_name': bolded_names[i]}
+            suggestion['pois'].append(poi_info)
+        [suggestion['categories'].append(x.text) for x in categories]
+        return suggestion
