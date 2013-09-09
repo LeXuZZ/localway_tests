@@ -141,10 +141,8 @@ class POIPageTest(WTFBaseTest):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
         webdriver.implicitly_wait(10)
         poi_page = PageFactory.create_page(POIPage, webdriver)
-
-        print '1'
-
-
+        vt = poi_page.get_viewed_together()
+        # poi_page.open_vt_map(1)
 
 if __name__ == "__main__":
         unittest.main()

@@ -235,11 +235,10 @@ def create_stub_data_for_autosuggestion():
     suggestion['categories'].append(u'Ресторанный дворик')
     suggestion['categories'].append(u'Рыбный ресторан')
 
-    suggestion['pois'].append({'address': u'Певческий пер, 6', 'name': u'Экспедиция. Ресторан', 'rating': u'5',
-                               'bolded_name': u'Рест'})
     suggestion['pois'].append(
-        {'address': u'Ленинградское шоссе, 16а ст4', 'name': u'Чемпион. Ресторан и бар', 'rating': u'4',
-         'bolded_name': u'Рест'})
-    suggestion['pois'].append({'address': u'Мира проспект, 91 корпус 3', 'name': u'Океан. Ресторан', 'rating': u'3',
-                               'bolded_name': u'Рест'})
+        dict(address=u'Певческий пер, 6', name=u'Экспедиция. Ресторан', rating=u'5', bolded_name=u'Рест'))
+    suggestion['pois'].append(
+        dict(address=u'Ленинградское шоссе, 16а ст4', name=u'Чемпион. Ресторан и бар', rating=u'4', bolded_name=u'Рест'))
+    suggestion['pois'].append(
+        dict(address=u'Мира проспект, 91 корпус 3', name=u'Океан. Ресторан', rating=u'3', bolded_name=u'Рест'))
     return suggestion

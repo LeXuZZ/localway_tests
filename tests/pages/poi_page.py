@@ -3,7 +3,7 @@ from collections import defaultdict
 import re
 import urllib
 import urllib2
-from tests.pages.block_objects import HeaderBlock, FooterBlock, PhotoGallery
+from tests.pages.block_objects import HeaderBlock, FooterBlock, PhotoGallery, ViewedTogether
 from tests.static.constants import CONTACT_KEYS
 from tests.utils.data_utils import convert_cyrillic_url, convert_metro_station
 
@@ -12,7 +12,7 @@ __author__ = 'lxz'
 from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 
-class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery):
+class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery, ViewedTogether):
     '''
     POIPage
     WTFramework PageObject representing a page like:

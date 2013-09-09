@@ -43,7 +43,7 @@ class YandexAPI():
         if response.status_code == 200:
             return response
         else:
-            print 'Response status code ' + str(response.status_code) + '. Rejected.'
+            # print 'Response status code ' + str(response.status_code) + '. Rejected.'
             return 0
 
     def get_found_count(self, query):

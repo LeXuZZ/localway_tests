@@ -6,7 +6,6 @@ __author__ = 'lxz'
 
 
 class HeaderBlock():
-
     header_leisure_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[1]')
     header_active_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[2]')
     header_restaurants_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[3]')
@@ -24,7 +23,6 @@ class HeaderBlock():
 
 
 class FooterBlock():
-
     footer_leisure_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[1]')
     footer_active_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[2]')
     footer_restaurants_link = lambda self: self.webdriver.find_element_by_xpath('//footer/section/nav/a[3]')
@@ -37,7 +35,6 @@ class FooterBlock():
 
 
 class PhotoGallery():
-
     gallery_main = lambda self: self.webdriver.find_element_by_xpath('//lw-gallery/div')
     gallery_previous = lambda self: self.webdriver.find_element_by_xpath('//a[@class=\'slide-prev\']')
     gallery_next = lambda self: self.webdriver.find_element_by_xpath('//a[@class=\'slide-next\']')
@@ -54,11 +51,37 @@ class PhotoGallery():
 
 
 class ViewedTogether():
-    item_content_xpath = '//aside/section[3]/section/a/div'
-    vt_hotel_stars = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/span[1]')
-    vt_names = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/p')
-    vt_ratings = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/span[2]')
-    vt_category = lambda self: self.webdriver.find_elements_by_xpath(self.item_content_xpath + '/div/span[3]')
+    vt_images = lambda self: self.webdriver.find_elements_by_xpath('//img[@data-bind="vt-image"]')
+    vt_hotel_stars = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="vt-hotelStars"]')
+    vt_names = lambda self: self.webdriver.find_elements_by_xpath('//p[@data-bind="vt-poiName"]')
+    vt_ratings = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="vt-rating"]')
+    vt_category = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="vt-category"]')
+    vt_address = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="vt-address"]')
+
+    vt_show_map = lambda self, number: self.webdriver.find_element_by_xpath('//a[' + str(number) + ']/div/div/span[4]/span[2]/span')
+
+    def open_vt_map(self, number):
+        image = self.vt_images()[number]
+        ActionChains(self.webdriver).move_to_element(image).perform()
+
+    def get_viewed_together(self):
+        viewed_together = defaultdict(list)
+        names = [x.text for x in self.vt_names()]
+        hotel_stars_elements = self.vt_hotel_stars()
+        hotel_stars = []
+        for element in hotel_stars_elements:
+            if element.is_displayed():
+                hotel_stars.append(get_digits_from_string(element.get_attribute('class')))
+            else:
+                hotel_stars.append('')
+        ratings = [get_digits_from_string(x.get_attribute('class')) for x in self.vt_ratings()]
+        categories = [x.text for x in self.vt_category()]
+        address = [x.text for x in self.vt_address()]
+        for i in range(len(names)):
+            poi_info = dict(name=names[i], hotel_stars=hotel_stars[i], rating=ratings[i],
+                            categories=categories[i], address=address[i])
+            viewed_together['pois'].append(poi_info)
+        return viewed_together
 
 
 class AutoSuggestion():
@@ -73,11 +96,10 @@ class AutoSuggestion():
         categories = self.as_categories()
         addresses = [x.text for x in self.as_addresses()]
         names = [get_name_from_auto_suggestion(x.text) for x in self.as_names()]
-        ratings = [x.get_attribute('class') for x in self.as_ratings()]
+        ratings = [get_digits_from_string(x.get_attribute('class')) for x in self.as_ratings()]
         bolded_names = [x.text for x in self.as_bolded_names()]
         for i in range(len(names)):
-            poi_info = {'address': addresses[i], 'name': names[i], 'rating': get_digits_from_string(ratings[i]),
-                        'bolded_name': bolded_names[i]}
+            poi_info = dict(address=addresses[i], name=names[i], rating=ratings[i], bolded_name=bolded_names[i])
             suggestion['pois'].append(poi_info)
         [suggestion['categories'].append(x.text) for x in categories]
         return suggestion
