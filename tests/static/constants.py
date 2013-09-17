@@ -52,6 +52,7 @@ class SECTION_LINKS_SUFFIX():
 class URL_PREFIXES():
     POI_ID_PREFIX = '#/poi?id='
     HOME_PAGE_PREFIX = '#/'
+    ADMIN_POI_ID_PREFIX = '#/poi/'
 
 class WEIGHT:
     SCORE_FOR_EXACT_MATCH = 1
@@ -96,8 +97,9 @@ class WEIGHT:
 
 class YANDEX_MAPS_API_REQUESTS():
 
-    POI_COORDINATES = 'http://geocode-maps.yandex.ru/1.x/?geocode={0}&kind=house&format=json&rspn=1&spn=0.47795,0.33855&results=1&ll=37.61776155,55.755773'
+    POI_COORDINATES = 'http://geocode-maps.yandex.ru/1.x/?geocode=WHERE&kind=house&format=json&rspn=1&spn=0.47795,0.33855&results=1&ll=37.61776155,55.755773'
 
 class TEST_POI_ID:
 
     POI_ID_FOR_PHOTO_GALLERY = '169085af0000000000000000'
+    POI_ID_FOR_VIEWED_TOGETHER = '164808af0000000000000000'

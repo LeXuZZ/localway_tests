@@ -1,4 +1,7 @@
+# coding=utf-8
 import unittest
+import time
+from wtframework.wtf.web.webelement import WebElementUtils
 from tests.pages.poi_page import POIPage
 from tests.static.constants import URL_PREFIXES, TEST_POI_ID, POI_KEYS
 from tests.utils.data_utils import crop_first_zero_if_exist, convert_ms_to_HM, get_digits_from_string, get_image_id_from_src, get_time_from_check_info
@@ -137,12 +140,36 @@ class POIPageTest(WTFBaseTest):
         self.assertEqual(poi[POI_KEYS.IMAGES][6], img_id())
         self.assertIn('active', poi_page.thumbnails_list()[6].get_attribute('class'))
 
-    def test_viewed_together_without_geo_data(self):
+    def test_viewed_together_map_open(self):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
         webdriver.implicitly_wait(10)
         poi_page = PageFactory.create_page(POIPage, webdriver)
-        vt = poi_page.get_viewed_together()
-        # poi_page.open_vt_map(1)
+        poi_page.open_vt_map(1)
+        self.assertTrue(WebElementUtils.check_if_attached_in_dom(webdriver, poi_page.vt_modal_map()))
+
+    # def test_viewed_together_without_geo_data(self):
+    #     webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_VIEWED_TOGETHER))
+    #     webdriver.implicitly_wait(10)
+    #     poi_page = PageFactory.create_page(POIPage, webdriver)
+    #     vt_info = poi_page.get_viewed_together_info()
+    #     while True:
+    #         vt_blocks = poi_page.vt_blocks()
+    #         for block in vt_blocks:
+    #             if not 'hasCoords' in block.get_attribute('class'):
+    #                 print 'GOTCHA!'
+    #         webdriver.refresh()
+
+    def test_viewed_together_data_existence(self):
+        webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_VIEWED_TOGETHER))
+        webdriver.implicitly_wait(10)
+        poi_page = PageFactory.create_page(POIPage, webdriver)
+        vt_info = poi_page.get_viewed_together_info()
+        for v in vt_info['pois']:
+            self.assertNotEqual(v['name'], '')
+            self.assertIsNotNone(v['hotel_stars'])
+            self.assertNotEqual(v['rating'], '')
+            self.assertNotEqual(v['categories'], '')
+            self.assertNotEqual(v['address'], '')
 
 if __name__ == "__main__":
         unittest.main()

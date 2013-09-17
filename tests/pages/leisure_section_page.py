@@ -1,11 +1,11 @@
 import re
-from tests.pages.block_objects import HeaderBlock, FooterBlock
+from tests.pages.block_objects import HeaderBlock, FooterBlock, SearchBlock
 from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 __author__ = 'lxz'
 
 
-class LeisureSectionPage(PageObject, HeaderBlock, FooterBlock):
+class LeisureSectionPage(PageObject, HeaderBlock, FooterBlock, SearchBlock):
 
     def _validate_page(self, webdriver):
 

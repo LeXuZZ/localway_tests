@@ -95,7 +95,7 @@ class WebDriverFactory(object):
             #handle as local webdriver
             self.webdriver = self.__create_driver_from_browser_config()
 
-        if not WebDriverFactory.OPERA and not WebDriverFactory.INTERNETEXPLORER in self._config_reader.get(WebDriverFactory.BROWSER_TYPE_CONFIG):
+        if not WebDriverFactory.OPERA or not WebDriverFactory.INTERNETEXPLORER in self._config_reader.get(WebDriverFactory.BROWSER_TYPE_CONFIG):
             self.webdriver.maximize_window()
 
         return self.webdriver
@@ -153,11 +153,12 @@ class WebDriverFactory(object):
 
         for prop in other_desired_capabilities:
             value = other_desired_capabilities[prop]
-            if isinstance(value, basestring):
+            if isinstance(value, basestring) or isinstance(value, bool):
+                desired_capabilities[prop] = value
+            elif isinstance(value, dict):
                 desired_capabilities[prop] = value
             else:
                 desired_capabilities[prop] = str(value)
-
         # Set the test name property if specified in the WTF_TESTNAME var.
         try:
             test_name = self._config_reader.get("TESTNAME")

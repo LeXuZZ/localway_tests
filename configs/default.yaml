@@ -53,13 +53,15 @@ selenium:
   # Required if using selenium Grid.
   desired_capabilities:
     # Target browser version.
-    version: 19
+    version: 20
+    geo.wifi.uri: { "status": "OK", "accuracy": 10.0, "location": {"lat": 52.1771129, "lng": 5.4099848} }
+    nativeEvents: True
 
     # ANY, ANDROID, LINUX, MAC, UNIX, VISTA, WIN7, WIN8, WINDOWS, XP
-    platform: XP
+    platform: WIN8
 
     # Name you'd like to label your sessions. (useful for labeling on sauce)
-    name: windows_xp_firefox_19_tests
+    name: windows8_firefox_20_tests
 
 
 

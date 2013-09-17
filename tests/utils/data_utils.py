@@ -185,7 +185,7 @@ def get_global_position(webelement, point):
 def check_oops_tooltip_position(webelement, webdriver):
     # ActionChains(webdriver).move_to_element(webelement).click()
     webelement.click()
-    tooltip = webdriver.find_element_by_xpath('//div[contains(@id,\'ui-tooltip\')]')
+    tooltip = webdriver.find_element_by_xpath('//div[contains(@id,"ui-tooltip")]')
     webelement_pos = get_global_position(webelement, get_bottom_center_of_webelement(webelement))
     tooltip_pos = get_global_position(tooltip, get_top_center_of_webelement(tooltip))
     # if abs(webelement_pos['x'] - tooltip_pos['x']) == 0 and abs(webelement_pos['y'] - tooltip_pos['y']) == 9:
@@ -242,3 +242,7 @@ def create_stub_data_for_autosuggestion():
     suggestion['pois'].append(
         dict(address=u'Мира проспект, 91 корпус 3', name=u'Океан. Ресторан', rating=u'3', bolded_name=u'Рест'))
     return suggestion
+
+
+def query_format(text, query):
+    return re.sub('QUERY_TEXT', str(text), query)

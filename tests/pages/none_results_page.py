@@ -1,12 +1,12 @@
 # coding=utf-8
 import re
-from tests.pages.block_objects import HeaderBlock, FooterBlock
+from tests.pages.block_objects import HeaderBlock, FooterBlock, SearchBlock
 from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 __author__ = 'lxz'
 
 
-class NoneResultsList(PageObject, HeaderBlock, FooterBlock):
+class NoneResultsList(PageObject, HeaderBlock, FooterBlock, SearchBlock):
 
 
         ### Page Elements Section ###

@@ -1,0 +1,6 @@
+mongodb_auth: mongodb://localway:LYH213eask123@172.31.237.13:27017/localway
+postgre_dbname: localway
+postgre_user: sa
+postgre_host: 172.31.237.13
+postgre_port: 5432
+postgre_password: 2966db93f9995525706125404881e56c

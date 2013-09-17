@@ -1,7 +1,13 @@
 # coding=utf-8
+from random import choice, randrange
 import unittest
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
 
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions
+from tests.pages.block_objects import LocateMe
+from wtframework.wtf.web.webelement import WebElementUtils
 
 from tests.pages import HomePage, ResultsListPage
 from tests.pages.none_results_page import NoneResultsList
@@ -28,7 +34,7 @@ class ResultsPageTest(WTFBaseTest):
         webdriver = self.set_up()
         home_page = PageFactory.create_page(HomePage, webdriver)
         query = 'UNACCEPTABLE'
-        found_count = YandexAPI().get_found_count(query)
+        found_count = YandexAPI.get_found_count(query)
         self.assertEqual('0', found_count)
         home_page.search_for_where(query)
         home_page.click_search_button()
@@ -100,13 +106,82 @@ class ResultsPageTest(WTFBaseTest):
         webdriver = self.set_up()
         home_page = PageFactory.create_page(HomePage, webdriver)
         query = u"Москва"
-        found_count = YandexAPI().get_found_count(query)
+        found_count = YandexAPI.get_found_count(query)
         self.assertGreater(found_count, 0)
         home_page.search_for_where(query)
         home_page.click_search_button()
         webdriver.implicitly_wait(5)
         results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
         self.assertGreater(len(results_list_page.articles()), 1, 'POI list is empty')
+
+    def test_results_list_briefs(self):
+        webdriver = self.set_up()
+        home_page = PageFactory.create_page(HomePage, webdriver)
+        home_page.search_for_what(u"Бар")
+        home_page.click_search_button()
+        webdriver.implicitly_wait(5)
+        results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
+        results_list_page.get_results()
+
+    def test_locate_me_enter_valid_address(self):
+        address = u'Москва, улица Жебрунова'
+        webdriver = self.set_up()
+        home_page = PageFactory.create_page(HomePage, webdriver)
+        home_page.search_for_what(u"Бар")
+        home_page.click_search_button()
+        webdriver.implicitly_wait(10)
+        results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
+        results_list_page.click_search_locate_me()
+        results_list_page.type_address(address)
+        WebElementUtils.check_if_text_present_in_element_value(webdriver, (By.ID, LocateMe.lm_input_address_locator), address)
+        self.assertEqual(results_list_page.lm_input_address().get_attribute("value"), address)
+        self.assertEqual(results_list_page.lm_location_enabled().text, address)
+        self.assertFalse(results_list_page.lm_save_button_disabled().is_displayed(), 'save button is not present')
+        self.assertTrue(results_list_page.lm_save_button_enabled().is_displayed(), 'save button is not present')
+        results_list_page.click_save_location_button()
+        self.assertEqual(results_list_page.search_where_input().get_attribute("value"), address)
+
+    def test_locate_me_move_pin(self):
+        webdriver = self.set_up()
+        home_page = PageFactory.create_page(HomePage, webdriver)
+        home_page.search_for_what(u"Бар")
+        home_page.click_search_button()
+        webdriver.implicitly_wait(10)
+        results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
+        results_list_page.click_search_locate_me()
+        needed_text = u'Москва, улица Ильинка'
+        past_inputted_text = results_list_page.lm_input_address().get_attribute("value")
+        ActionChains(webdriver).drag_and_drop_by_offset(results_list_page.lm_map_pin(), 50, 50).perform()
+        WebElementUtils.check_if_text_present_in_element_value(webdriver, (By.ID, LocateMe.lm_location_enabled_locator), needed_text)
+        present_inputted_text = results_list_page.lm_input_address().get_attribute("value")
+        self.assertNotEqual(past_inputted_text, present_inputted_text)
+        self.assertEqual(results_list_page.lm_location_enabled().text, present_inputted_text)
+
+    def test_locate_me_enter_unaccepted_address(self):
+        needed_text = u'Адрес не найден, исправьте адрес или выберите место на карте мышкой'
+        webdriver = self.set_up()
+        home_page = PageFactory.create_page(HomePage, webdriver)
+        home_page.search_for_what(u"Бар")
+        home_page.click_search_button()
+        webdriver.implicitly_wait(10)
+        results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
+        results_list_page.click_search_locate_me()
+        results_list_page.type_address(u'UNACCEPTABLE')
+        WebElementUtils.check_if_text_present_in_element_value(webdriver, (By.ID, LocateMe.lm_location_disabled_locator), needed_text)
+        self.assertEqual(results_list_page.lm_location_disabled().text, needed_text)
+        self.assertTrue(results_list_page.lm_save_button_disabled().is_displayed(), 'save button is present')
+        self.assertFalse(results_list_page.lm_save_button_enabled().is_displayed(), 'save button is present')
+
+    def test_locate_me(self):
+        webdriver = self.set_up()
+        home_page = PageFactory.create_page(HomePage, webdriver)
+        home_page.search_for_what(u"Бар")
+        home_page.click_search_button()
+        webdriver.implicitly_wait(10)
+        results_list_page = PageFactory.create_page(ResultsListPage, webdriver)
+        results_list_page.click_search_locate_me()
+        results_list_page.click_locate_me()
+        print '1'
 
 if __name__ == "__main__":
     unittest.main()

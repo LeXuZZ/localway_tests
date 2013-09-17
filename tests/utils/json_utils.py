@@ -1,3 +1,4 @@
+# coding=utf-8
 import json
 import re
 import requests
@@ -38,21 +39,24 @@ class SearchAPI():
 
 
 class YandexAPI():
-    def get_response_from_api(self, query):
-        response = requests.get(YANDEX_MAPS_API_REQUESTS.POI_COORDINATES.format(query))
+    @staticmethod
+    def get_response_from_api(query):
+        response = requests.get(re.sub('WHERE', query, YANDEX_MAPS_API_REQUESTS.POI_COORDINATES))
         if response.status_code == 200:
             return response
         else:
             # print 'Response status code ' + str(response.status_code) + '. Rejected.'
             return 0
 
-    def get_found_count(self, query):
-        response = self.get_response_from_api(query)
+    @staticmethod
+    def get_found_count(query):
+        response = YandexAPI.get_response_from_api(query)
         return json.loads(response._content)['response']['GeoObjectCollection']['metaDataProperty'][
             'GeocoderResponseMetaData']['found']
 
-    def get_coordinates(self, query):
-        response = self.get_response_from_api(query)
+    @staticmethod
+    def get_coordinates(query):
+        response = YandexAPI.get_response_from_api(query)
         coor_string = json.loads(response._content)['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
         return {'lat': coor_string.split()[1], 'lon': coor_string.split()[0]}
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 from json import JSONEncoder
 from random import choice
 from bson import ObjectId
@@ -20,7 +20,7 @@ class MongoDB():
     localway_collection = None
 
     def __init__(self):
-        info = ConfigReader('mongodb').get("mongodb_auth")
+        info = ConfigReader('db').get("mongodb_auth")
         conn = MongoClient(info)
         self.localway_collection = conn['localway']
 

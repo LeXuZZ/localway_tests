@@ -1,11 +1,13 @@
 import re
-from tests.pages.block_objects import HeaderBlock, FooterBlock
+from selenium.webdriver.common.keys import Keys
+from wtframework.wtf.web.webelement import WebElementUtils
+from tests.pages.block_objects import HeaderBlock, FooterBlock, ResultsListPOIBrief, LocateMe, SearchBlock
 from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 __author__ = 'lxz'
 
 
-class ResultsListPage(PageObject, HeaderBlock, FooterBlock):
+class ResultsListPage(PageObject, HeaderBlock, FooterBlock, ResultsListPOIBrief, LocateMe, SearchBlock):
 
 
     articles_xpath = '//section[@class="result-items"]/a/div[1]'
@@ -23,14 +25,15 @@ class ResultsListPage(PageObject, HeaderBlock, FooterBlock):
     district_filter_list = lambda self: self.webdriver.find_element_by_class_name('district_filter_list')
     metro_station_filter_list = lambda self: self.webdriver.find_element_by_class_name('metro_station_filter_list')
     schedule_filter_list = lambda self: self.webdriver.find_element_by_class_name('schedule_filter_list')
-    search_what_input = lambda self: self.webdriver.find_element_by_xpath('/html/body/div/form/input')
-    search_where_input = lambda self: self.webdriver.find_element_by_xpath('/html/body/div/form/input[2]')
-    search_button = lambda self: self.webdriver.find_element_by_xpath('/html/body/div/form/button')
     poi_place_holder = lambda self: self.webdriver.find_element_by_class_name('poi_placeholder')
     poi_list = lambda self: self.webdriver.find_element_by_xpath('//section[@class="result-items"]')
     articles = lambda self: self.webdriver.find_elements_by_xpath(self.articles_xpath)
     articles_names = lambda self: self.webdriver.find_elements_by_xpath(self.articles_xpath + self.name_xpath_pref)
     pagination_panel = lambda self: self.webdriver.find_element_by_class_name("pagination")
+
+
+
+
 
     ### End Page Elements Section ###
 
@@ -42,3 +45,21 @@ class ResultsListPage(PageObject, HeaderBlock, FooterBlock):
 
         if not re.search('Localway', webdriver.title):
             raise InvalidPageError('This page did not pass ResultsListPage page validation.')
+
+    def type_address(self, address_string):
+        self.lm_input_address().clear()
+        self.webdriver.implicitly_wait(3)
+        self.lm_input_address().send_keys(address_string)
+        self.lm_input_address().send_keys(Keys.RETURN)
+
+    def click_locate_me(self):
+        WebElementUtils.check_is_displayed(self.webdriver, self.lm_locate_me_button())
+        self.lm_locate_me_button().click()
+
+    def click_save_location_button(self):
+        WebElementUtils.check_is_displayed(self.webdriver, self.lm_save_button_enabled())
+        self.lm_save_button_enabled().click()
+
+    def click_search_locate_me(self):
+        self.search_locate_me_button().click()
+        WebElementUtils.check_if_attached_in_dom(self.webdriver, self.lm_input_address())

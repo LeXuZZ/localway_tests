@@ -11,6 +11,7 @@ __author__ = 'lxz'
 
 
 class HomePageTest(WTFBaseTest):
+
     maxDiff = None
 
     def set_up(self):
@@ -64,7 +65,6 @@ class HomePageTest(WTFBaseTest):
         suggestion_from_page = home_page.get_autosuggestion()
         stub_data = create_stub_data_for_autosuggestion()
         self.assertEqual(suggestion_from_page, stub_data)
-        print '1'
 
 if __name__ == "__main__":
     unittest.main()

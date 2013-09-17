@@ -5,6 +5,13 @@ from tests.utils.data_utils import get_name_from_auto_suggestion, get_digits_fro
 __author__ = 'lxz'
 
 
+class SearchBlock():
+    search_what_input = lambda self: self.webdriver.find_element_by_id("input-what")
+    search_where_input = lambda self: self.webdriver.find_element_by_id("input-where")
+    search_button = lambda self: self.webdriver.find_element_by_id("searchButton")
+    search_locate_me_button = lambda self: self.webdriver.find_element_by_id('searchLocateMeButton')
+
+
 class HeaderBlock():
     header_leisure_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[1]')
     header_active_link = lambda self: self.webdriver.find_element_by_xpath('//header/section/nav/a[2]')
@@ -36,21 +43,23 @@ class FooterBlock():
 
 class PhotoGallery():
     gallery_main = lambda self: self.webdriver.find_element_by_xpath('//lw-gallery/div')
-    gallery_previous = lambda self: self.webdriver.find_element_by_xpath('//a[@class=\'slide-prev\']')
-    gallery_next = lambda self: self.webdriver.find_element_by_xpath('//a[@class=\'slide-next\']')
+    gallery_previous = lambda self: self.webdriver.find_element_by_xpath('//a[@class="slide-prev"]')
+    gallery_next = lambda self: self.webdriver.find_element_by_xpath('//a[@class="slide-next"]')
     move_to_thumbnails = lambda self: ActionChains(self.webdriver).move_to_element(self.webdriver.find_element_by_xpath(
-        '//div[@class=\'thumbnails\']')).perform()
-    thumbnails_previous = lambda self: self.webdriver.find_element_by_xpath('//div[@class=\'thumbnails\']/a[1])')
-    thumbnails_next = lambda self: self.webdriver.find_element_by_xpath('//div[@class=\'thumbnails\']/a[2]')
-    thumbnails_list = lambda self: self.webdriver.find_elements_by_xpath('//div[@class=\'thumbs-list\']/a')
-    get_images = lambda self: self.webdriver.find_elements_by_xpath('//div[@class=\'img-container\']/img')
+        '//div[@class="thumbnails"]')).perform()
+    thumbnails_previous = lambda self: self.webdriver.find_element_by_xpath('//div[@class="thumbnails"]/a[1])')
+    thumbnails_next = lambda self: self.webdriver.find_element_by_xpath('//div[@class="thumbnails"]/a[2]')
+    thumbnails_list = lambda self: self.webdriver.find_elements_by_xpath('//div[@class="thumbs-list"]/a')
+    get_images = lambda self: self.webdriver.find_elements_by_xpath('//div[@class="img-container"]/img')
     get_circles = lambda self: self.webdriver.find_elements_by_xpath(
-        '//div[@class=\'see-all\']/div[@class=\'circles\']/span')
+        '//div[@class="see-all"]/div[@class="circles"]/span')
 
     get_center_image = lambda self: self.get_images()[1]
 
 
 class ViewedTogether():
+    vt_blocks = lambda self: self.webdriver.find_elements_by_xpath('//aside/section[3]/section/a')
+
     vt_images = lambda self: self.webdriver.find_elements_by_xpath('//img[@data-bind="vt-image"]')
     vt_hotel_stars = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="vt-hotelStars"]')
     vt_names = lambda self: self.webdriver.find_elements_by_xpath('//p[@data-bind="vt-poiName"]')
@@ -60,11 +69,14 @@ class ViewedTogether():
 
     vt_show_map = lambda self, number: self.webdriver.find_element_by_xpath('//a[' + str(number) + ']/div/div/span[4]/span[2]/span')
 
+    vt_modal_map = lambda self: self.webdriver.find_element_by_xpath('//lw-modal[@call-as="showPoiModal"]/div')
+
     def open_vt_map(self, number):
         image = self.vt_images()[number]
-        ActionChains(self.webdriver).move_to_element(image).perform()
+        link = self.vt_show_map(number + 1)
+        ActionChains(self.webdriver).move_to_element(image).move_to_element(link).click().perform()
 
-    def get_viewed_together(self):
+    def get_viewed_together_info(self):
         viewed_together = defaultdict(list)
         names = [x.text for x in self.vt_names()]
         hotel_stars_elements = self.vt_hotel_stars()
@@ -103,3 +115,44 @@ class AutoSuggestion():
             suggestion['pois'].append(poi_info)
         [suggestion['categories'].append(x.text) for x in categories]
         return suggestion
+
+
+class ResultsListPOIBrief():
+    brief_locator = '//a[@data-bind="brief"]'
+    brief_name_locator = '//h4[@data-bind="brief_name"]'
+    brief_categories_locator = '//div[@data-bind="brief_categories"]'
+    brief_category_locator = '//span[@data-bind="brief_category"]'
+    brief_rating_locator = '//span[@data-bind="brief_rating"]'
+    brief_address_locator = '//p[@data-bind="brief_address"]'
+    brief_metro_stations_locator = '//p[@data-bind="brief_address"]'
+    brief_metro_name_locator = '//span[@data-bind="brief_metroName"]'
+
+    briefs = lambda self: self.webdriver.find_elements_by_xpath(self.brief_locator)
+    brief_name = lambda self, number: self.webdriver.find_element_by_xpath(self.brief_locator + '[' + str(number) + ']' + self.brief_name_locator).text
+    brief_address = lambda self, number: self.webdriver.find_element_by_xpath(self.brief_locator + '[' + str(number) + ']' + self.brief_address_locator).text
+    brief_rating = lambda self, number: get_digits_from_string(self.webdriver.find_element_by_xpath(self.brief_locator + '[' + str(number) + ']' + self.brief_rating_locator).get_attribute('class'))
+    brief_categories = lambda self, number: [x.text for x in self.webdriver.find_elements_by_xpath(self.brief_locator + '[' + str(number) + ']' + self.brief_category_locator)]
+    brief_metro = lambda self, number: [x.text for x in self.webdriver.find_elements_by_xpath(self.brief_locator + '[' + str(number) + ']' + self.brief_metro_name_locator)]
+
+    def get_results(self):
+        results = defaultdict(list)
+        length = len(self.briefs())
+        for i in range(1, length+1):
+            poi_info = dict(name=self.brief_name(i), address=self.brief_address(i), rating=self.brief_rating(i),
+                            categories=self.brief_categories(i), metro=self.brief_metro(i))
+            results['pois'].append(poi_info)
+        return results
+
+
+class LocateMe():
+    lm_input_address_locator = 'input-address'
+    lm_location_enabled_locator = 'location_enabled'
+    lm_location_disabled_locator = 'location_disabled'
+    lm_input_address = lambda self: self.webdriver.find_element_by_id(self.lm_input_address_locator)
+    lm_locate_me_button = lambda self: self.webdriver.find_element_by_id('locateMe')
+    lm_location_enabled = lambda self: self.webdriver.find_element_by_id(self.lm_location_enabled_locator)
+    lm_location_disabled = lambda self: self.webdriver.find_element_by_id(self.lm_location_disabled_locator)
+    lm_save_button_enabled = lambda self: self.webdriver.find_element_by_id('save_button_enabled')
+    lm_save_button_disabled = lambda self: self.webdriver.find_element_by_id('save_button_disabled')
+
+    lm_map_pin = lambda self: self.webdriver.find_element_by_xpath('//ymaps[contains(@id,"id_")]/..')

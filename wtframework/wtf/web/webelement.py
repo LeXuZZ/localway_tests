@@ -16,15 +16,15 @@
 ##########################################################################
 from datetime import datetime, timedelta
 from selenium.common.exceptions import ElementNotSelectableException, \
-    TimeoutException, NoSuchElementException
+    TimeoutException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from wtframework.wtf.config import WTF_TIMEOUT_MANAGER
 import time
 
 
 class WebElementSelector():
-    
     @staticmethod
     def find_element_by_selectors(webdriver, *selectors):
         """
@@ -46,7 +46,7 @@ class WebElementSelector():
                 raise BadSelectorError("Selectors should be of type selenium.webdriver.common.by.By")
             if type(value) != str:
                 raise BadSelectorError("Selectors should be of type selenium.webdriver.common.by.By")
-        
+
         selectors_used = []
         for selector in selectors:
             (by_method, value) = selector
@@ -55,25 +55,24 @@ class WebElementSelector():
                 return webdriver.find_element(by=by_method, value=value)
             except:
                 pass
-        
+
         raise ElementNotSelectableException("Unable to find elements using:" + ",".join(selectors_used))
-    
+
     @staticmethod
     def __is_valid_by_type(by_type):
         for attr, value in By.__dict__.iteritems():
             if "__" not in attr:
                 if by_type == value:
                     return True
-        
-        return False
-    
 
-class WebElementUtils():    
+        return False
+
+
+class WebElementUtils():
     """
     Utility methods for working with web pages and web elements.
     """
 
-    
 
     @staticmethod
     def wait_until_element_not_visible(webdriver, locator_lambda_expression, \
@@ -108,13 +107,55 @@ class WebElementUtils():
         @param webelement: WebDriver web element to validate.
         @type webelement: WebElement
         '''
-        script = "return arguments[0].complete && type of arguments[0].naturalWidth != \"undefined\" " +\
+        script = "return arguments[0].complete && type of arguments[0].naturalWidth != \"undefined\" " + \
                  "&& arguments[0].naturalWidth > 0"
         try:
             return webdriver.execute_script(script, webelement)
         except:
             return False #Img Tag Element is not on page.
 
+    @staticmethod
+    def check_is_displayed(webdriver, element, message='element is disabled', timeout=1):
+        find = lambda self, e=element: False if e.get_attribute("disabled") == 'true' else True
+        WebDriverWait(webdriver, timeout).until(find, message)
+
+
+    @staticmethod
+    def check_if_attached_in_dom(webdriver, element, message='element is not attached in DOM', timeout=2):
+        try:
+            WebDriverWait(webdriver, timeout).until(freshness_of(element), message)
+            return True
+        except TimeoutException:
+            return False
+
+    @staticmethod
+    def check_if_text_present_in_element_value(webdriver, locator, text, message='text not present in element value',
+                                               timeout=2):
+        try:
+            WebDriverWait(webdriver, timeout).until(
+                expected_conditions.text_to_be_present_in_element_value(locator, text), message)
+            return True
+        except TimeoutException:
+            return False
+
+
 class BadSelectorError(Exception):
     "Raised when a bad selector is passed into a WebElementSelector() method."
     pass
+
+
+class freshness_of(object):
+    """ Wait until an element is no longer attached to the DOM.
+    element is the element to wait for.
+    returns False if the element is still attached to the DOM, true otherwise.
+    """
+    def __init__(self, element):
+        self.element = element
+
+    def __call__(self, ignored):
+        try:
+            # Calling any method forces a staleness check
+            self.element.is_enabled()
+            return True
+        except StaleElementReferenceException as expected:
+            return False
