@@ -3,7 +3,7 @@ from collections import defaultdict
 import re
 import urllib
 import urllib2
-from tests.pages.block_objects import HeaderBlock, FooterBlock, PhotoGallery, ViewedTogether, SearchBlock
+from tests.pages.block_objects import HeaderBlock, FooterBlock, PhotoGallery, ViewedTogether, SearchBlock, AroundPOI
 from tests.static.constants import CONTACT_KEYS
 from tests.utils.data_utils import convert_cyrillic_url, convert_metro_station
 
@@ -12,7 +12,7 @@ __author__ = 'lxz'
 from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 
-class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery, ViewedTogether, SearchBlock):
+class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery, ViewedTogether, SearchBlock, AroundPOI):
     '''
     POIPage
     WTFramework PageObject representing a page like:
@@ -34,6 +34,7 @@ class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery, ViewedTogether
     amenities = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="amenity"]')
     cuisines = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="cuisine"]')
     description = lambda self: self.webdriver.find_element_by_id('poiDescription')
+    collapse_description = lambda self: self.webdriver.find_element_by_id('collapseDescription')
     intro = lambda self: self.webdriver.find_element_by_id('intro')
     # image = lambda self: self.webdriver.find_element_by_xpath("//img[@data-bind=\"galleryImage\"]")
     payments = lambda self: self.webdriver.find_elements_by_xpath('//span[@data-bind="paymentName"]')
@@ -41,13 +42,17 @@ class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery, ViewedTogether
     contact_emails = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="email"]')
     contact_sites = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="site-link"]')
     contact_social_links = lambda self: self.webdriver.find_elements_by_xpath('//a[@data-bind="social-link"]')
-    average_price = lambda self: self.webdriver.find_element_by_xpath('//span[@data-bind="averagePrice"]')
-    business_lunch = lambda self: self.webdriver.find_element_by_xpath('//li[@data-bind="businessLunchPrice"]')
+    #average_price = lambda self: self.webdriver.find_element_by_xpath('//span[@data-bind="averagePrice"]')
+    #business_lunch = lambda self: self.webdriver.find_element_by_xpath('//li[@data-bind="businessLunchPrice"]')
+
+    prices = lambda self: self.webdriver.find_elements_by_xpath('//li[@data-bind="prices"]')
 
     yandex_map = lambda self: self.webdriver.find_element_by_xpath('//section[@class="location"]/div[@class="map"]')
     checkin_time = lambda self: self.webdriver.find_element_by_xpath('//li[@data-bind="checkinTime"]')
     checkout_time = lambda self: self.webdriver.find_element_by_xpath('//li[@data-bind="checkoutTime"]')
     hotel_stars = lambda self: self.webdriver.find_element_by_id('hotelStars')
+
+    back_to_search_results_button = lambda self: self.webdriver.find_element_by_id('backToSearchButton')
     ### End Page Elements Section ###
 
     def _validate_page(self, webdriver):
@@ -79,3 +84,6 @@ class POIPage(PageObject, HeaderBlock, FooterBlock, PhotoGallery, ViewedTogether
             return self.around_the_clock().text
         else:
             return sorted([x.text for x in self.worktime()])
+
+    def click_back_to_search_results_button(self):
+        self.back_to_search_results_button().click()

@@ -26,8 +26,14 @@ import time
 import random
 import string
 import urllib2
+from bson import ObjectId
+import itertools
+from pymongo import MongoClient
 from selenium.webdriver import ActionChains
+from tests.utils.weight_util import distance
+from wtframework.wtf.config import ConfigReader
 from tests.static.constants import POI_KEYS
+from tests.utils.json_utils import PortalAPI
 from tests.utils.mongo_utils import MongoDB
 
 
@@ -129,25 +135,15 @@ def convert_metro_station(metro_name):
     return re.sub(u'м. ', '', metro_name)
 
 
-def convert_average_price_from_poi(poi):
-    if not poi[POI_KEYS.AVERAGE_PRICE]:
-        return u''
-    else:
-        return poi[POI_KEYS.AVERAGE_PRICE][0] + ' - ' + poi[POI_KEYS.AVERAGE_PRICE][1]
-
-
-def convert_business_lunch_from_poi(poi):
-    d = ''
-    if not poi[POI_KEYS.BUSINESS_LUNCH_PRICE]:
-        return u''
-    else:
-        if poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] in '':
-            d += (u'до ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE] + u' р.')
-        if poi[POI_KEYS.BUSINESS_LUNCH_PRICE][1] in '':
-            d += (u'от ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] + u' р.')
-        if poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] and poi[POI_KEYS.BUSINESS_LUNCH_PRICE][1] not in '':
-            d += (poi[POI_KEYS.BUSINESS_LUNCH_PRICE][0] + ' - ' + poi[POI_KEYS.BUSINESS_LUNCH_PRICE][1] + u' р.')
-    return d
+def convert_prices_from_poi_json(poi):
+    if poi['free']:
+        return poi['name'] + u': ' + u'бесплатно'
+    if 'from' in poi and 'to' in poi:
+        return poi['name'] + u': ' + str(poi['from']) + ' - ' + str(poi['to']) + u' р.'
+    if 'from' in poi:
+        return poi['name'] + u': ' + u'от ' + str(poi['from']) + u' р.'
+    if 'to' in poi:
+        return poi['name'] + u': ' + u'до ' + str(poi['to']) + u' р.'
 
 
 def delete_last_slash_if_exist(string):
@@ -238,7 +234,8 @@ def create_stub_data_for_autosuggestion():
     suggestion['pois'].append(
         dict(address=u'Певческий пер, 6', name=u'Экспедиция. Ресторан', rating=u'5', bolded_name=u'Рест'))
     suggestion['pois'].append(
-        dict(address=u'Ленинградское шоссе, 16а ст4', name=u'Чемпион. Ресторан и бар', rating=u'4', bolded_name=u'Рест'))
+        dict(address=u'Ленинградское шоссе, 16а ст4', name=u'Чемпион. Ресторан и бар', rating=u'4',
+             bolded_name=u'Рест'))
     suggestion['pois'].append(
         dict(address=u'Мира проспект, 91 корпус 3', name=u'Океан. Ресторан', rating=u'3', bolded_name=u'Рест'))
     return suggestion
@@ -246,3 +243,93 @@ def create_stub_data_for_autosuggestion():
 
 def query_format(text, query):
     return re.sub('QUERY_TEXT', str(text), query)
+
+
+def round_distance(distance):
+    if distance < 950:
+        result = str(int(round(distance / 10) * 10))
+        if result > 0:
+            result += ' м'
+    else:
+        result = str(round(distance / 100) / 10)
+        if result > 0:
+            result += ' км'
+    return result
+
+
+def get_name_without_digits_in_brackets(text):
+    return re.search('(.+)\s\(', text).group(1)
+
+
+def timer(f):
+    def tmp(*args, **kwargs):
+        t = time.time()
+        res = f(*args, **kwargs)
+        print "Время выполнения %s: %f" % (f.__name__, time.time() - t)
+        return res
+
+    return tmp
+
+
+@timer
+def get_recommendations_for_poi(poi_id):
+    all_needed_pois_list = []
+    #category_sections = {str(x['_id']): x['name'] for x in [x for x in MongoClient(ConfigReader('db').get("mongodb_auth"))['localway'].sections.find({'categories': ObjectId(str([x for x in MongoClient(ConfigReader('db').get("mongodb_auth"))['localway'].pois.find_one({"_id": ObjectId('225946af0000000000000000')})['categoriesWithPriority'] if 'priority' in x and x['priority'] == 1][0]['categoryId']))})]}
+    poi = MongoDB().get_poi_by_id(poi_id)
+    main_category_id = str(
+        [x for x in poi['categoriesWithPriority'] if 'priority' in x and x['priority'] == 1][0]['categoryId'])
+    category_sections = {str(x['_id']): x['name'] for x in MongoDB().get_sections_by_main_category_id(main_category_id)}
+    config = PortalAPI.get_config_for_around_poi()
+    all_c_recommendations = {}
+    all_s_recommendations = {}
+    excluded_recommendations = {}
+    is_main_category_in_reccomendations = False
+    for recommendation in config['config']:
+        if 'c_ids' in recommendation:
+            if main_category_id in recommendation['c_ids']:
+                is_main_category_in_reccomendations = True
+                if 'categories' in recommendation:
+                    all_c_recommendations.update(
+                        {x: MongoDB().convert_category_id_to_name(x) for x in recommendation['categories']})
+                if 'sections' in recommendation:
+                    all_s_recommendations.update(
+                        {x: MongoDB().convert_section_id_to_name(x) for x in recommendation['sections']})
+                if 'category_excludes' in recommendation:
+                    excluded_recommendations.update(
+                        {x: MongoDB().convert_category_id_to_name(x) for x in recommendation['category_excludes']})
+    if not is_main_category_in_reccomendations:
+        for recommendation in config['config']:
+            if 's_ids' in recommendation:
+                for section_id in category_sections.keys():
+                    if section_id in recommendation['s_ids']:
+                        if 'categories' in recommendation:
+                            all_c_recommendations.update(
+                                {x: MongoDB().convert_category_id_to_name(x) for x in recommendation['categories']})
+                        if 'sections' in recommendation:
+                            all_s_recommendations.update(
+                                {x: MongoDB().convert_section_id_to_name(x) for x in recommendation['sections']})
+                        if 'category_excludes' in recommendation:
+                            excluded_recommendations.update(
+                                {x: MongoDB().convert_category_id_to_name(x) for x in recommendation['category_excludes']})
+        recommended_pois_by_section_a = [list(itertools.chain.from_iterable([MongoDB().get_pois_with_needed_main_category_and_coords(y) for y in MongoDB().get_section_categories(x)])) for x in all_s_recommendations.keys()]
+        recommended_pois_by_section = [[y for y in x if 'priority' in y['categoriesWithPriority'][0] and y['categoriesWithPriority'][0]['priority'] == 1 and str(y['categoriesWithPriority'][0]['categoryId']) not in excluded_recommendations.keys()] for x in recommended_pois_by_section_a]
+        sorted_by_nearest_recommended_pois_list_by_sections = [sorted(x, key=lambda recommended_poi: (distance(poi['lat'], poi['lon'], recommended_poi['lat'], recommended_poi['lon']), recommended_poi['name'])) for x in recommended_pois_by_section]
+        sorted_by_nearest_recommended_pois_list_by_sections_with_rating = [sorted(x, key=lambda recommended_poi: (recommended_poi['rating']), reverse=True)[:2] for x in sorted_by_nearest_recommended_pois_list_by_sections]
+        for i, l in enumerate(sorted_by_nearest_recommended_pois_list_by_sections):
+            all_needed_pois_list.append((sorted_by_nearest_recommended_pois_list_by_sections_with_rating[i] + [x for x in l if x not in sorted_by_nearest_recommended_pois_list_by_sections_with_rating[i]])[:100])
+
+    recommended_pois_by_category_a = [MongoDB().get_pois_with_existing_category_and_coords(x) for x in all_c_recommendations.keys()]
+    recommended_pois_by_category = [[y for y in x if 'priority' in y['categoriesWithPriority'][0] and y['categoriesWithPriority'][0]['priority'] == 1 and str(y['categoriesWithPriority'][0]['categoryId']) not in excluded_recommendations.keys()] for x in recommended_pois_by_category_a]
+    sorted_by_nearest_recommended_pois_list_by_categories = [sorted(x, key=lambda recommended_poi: (distance(poi['lat'], poi['lon'], recommended_poi['lat'], recommended_poi['lon']), recommended_poi['name'])) for x in recommended_pois_by_category]
+    sorted_by_nearest_recommended_pois_list_by_categories_with_rating = [sorted(x, key=lambda recommended_poi: (recommended_poi['rating']), reverse=True)[:2] for x in sorted_by_nearest_recommended_pois_list_by_categories]
+
+
+    for i, l in enumerate(sorted_by_nearest_recommended_pois_list_by_categories):
+        all_needed_pois_list.append((sorted_by_nearest_recommended_pois_list_by_categories_with_rating[i] + [x for x in l if x not in sorted_by_nearest_recommended_pois_list_by_categories_with_rating[i]])[:100])
+    #for y in all_needed_pois_list:
+    #    for i in y:
+    #        print i['name'] + ' ' + str(distance(poi['lat'], poi['lon'], i['lat'], i['lon'])) + ' rating: ' + str(i['rating'])
+    #    print 'SPLITTED'
+    return all_needed_pois_list
+
+

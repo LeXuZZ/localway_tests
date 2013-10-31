@@ -2,6 +2,7 @@ from collections import defaultdict
 import pprint
 from tests.static.sql_queries import POSTGRE_SQL_QUERIES
 from tests.utils.data_utils import query_format
+from tests.utils.json_utils import YandexAPI
 from wtframework.wtf.config import ConfigReader
 
 __author__ = 'lxz'
@@ -56,5 +57,45 @@ class PostgreSQL():
             cat.append(dict(name=data['name'].decode("utf-8"), priority=data['priority']))
         return cat
 
-a = PostgreSQL().get_category_names_and_priorities_by_place_id(168477)
-print '1'
+    def get_all_pois_without_geo_data(self):
+        self.cur.execute(POSTGRE_SQL_QUERIES.GET_ALL_POI_ID_WITHOUT_GEO_DATA)
+        response = self.cur.fetchall()
+        return [x for x in response]
+
+    def set_all_geo(self):
+        all_pois = self.get_all_pois_without_geo_data()
+        for i in all_pois:
+            address = i['address']
+            _id = i['id']
+            coordinates = YandexAPI.get_coordinates(address)
+            if coordinates == 0:
+                print 'Wrong Yandex response for ' + str(_id)
+                continue
+            print str(_id) + ' ' + str(address) + ' lat = ' + str(coordinates['lat']) + ' lon = ' + str(coordinates['lon'])
+            query = 'UPDATE place_revision SET latitude=' + str(coordinates['lat']) + ', longitude=' + str(coordinates['lon']) + ' WHERE id=' + str(_id)
+            self.cur.execute(query)
+            self.conn.commit()
+            print 'Done for id ' + str(_id)
+            self.cur.execute(query)
+
+    def get_all_cities_without_geo(self):
+        self.cur.execute(POSTGRE_SQL_QUERIES.CITY_ADDRESSES_WITHOUT_GEO_DATA)
+        response = self.cur.fetchall()
+        return [x for x in response]
+
+    def set_all_cities_geo(self):
+        all_cities = self.get_all_cities_without_geo()
+        counter = 0
+        for i in all_cities:
+            address = i['address']
+            _id = i['id']
+            coordinates = YandexAPI.get_coordinates(address)
+            if coordinates == 0:
+                # print 'Not in moscow ' + str(_id)
+                continue
+            counter += 1
+            print str(counter) + ' ' + str(_id) + ' ' + str(address) + ' lat = ' + str(coordinates['lat']) + ' lon = ' + str(coordinates['lon'])
+
+
+PostgreSQL().set_all_cities_geo()
+print 'Done!'

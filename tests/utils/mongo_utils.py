@@ -24,6 +24,26 @@ class MongoDB():
         conn = MongoClient(info)
         self.localway_collection = conn['localway']
 
+    def get_pois_with_agglomeration(self, agglomeration_id="1af000000000000000000000"):
+        pois_with_agglomeration = self.localway_collection.pois.find({"agglomeration": ObjectId(agglomeration_id)})
+        pois_with_agglomeration_list = [x for x in pois_with_agglomeration]
+        return pois_with_agglomeration_list
+
+    def get_pois_with_needed_main_category_and_coords(self, category_id):
+        pois_with_needed_main_category = self.localway_collection.pois.find({"categoriesWithPriority": {"$elemMatch": {"priority": 1, "categoryId": ObjectId(category_id)}}, "lon": {"$exists": True}, "lat": {"$exists": True}})
+        pois_with_needed_main_category_list = [x for x in pois_with_needed_main_category]
+        return pois_with_needed_main_category_list
+
+    def get_pois_with_existing_category_and_coords(self, category_id):
+        pois_with_existing_category = self.localway_collection.pois.find({"categories": ObjectId(category_id), "lon": {"$exists": True}, "lat": {"$exists": True}})
+        pois_with_existing_category_list = [x for x in pois_with_existing_category]
+        return pois_with_existing_category_list
+
+    def get_section_categories(self, section_id):
+        section_categories = self.localway_collection.sections.find({"_id": ObjectId(section_id)})
+        section_categories_list = [x['categories'] for x in section_categories]
+        return section_categories_list[0]
+
     def get_poi_by_id(self, _id):
         return self.localway_collection.pois.find_one({"_id": ObjectId(_id)})
 
@@ -58,10 +78,14 @@ class MongoDB():
         return random_poi
 
     def get_random_poi_with_existing_coordinates(self):
-        pois_with_coordinates = self.localway_collection.pois.find({"lon": {"$exists": True}, "lat": {"$exists": True}})
-        pois_with_coordinates_list = [poi for poi in pois_with_coordinates]
+        pois_with_coordinates_list = self.get_pois_with_existing_coordinates()
         random_poi = choice(pois_with_coordinates_list)
         return random_poi
+
+    def get_pois_with_existing_coordinates(self):
+        pois_with_coordinates = self.localway_collection.pois.find({"lon": {"$exists": True}, "lat": {"$exists": True}})
+        pois_with_coordinates_list = [poi for poi in pois_with_coordinates]
+        return pois_with_coordinates_list
 
     def get_random_poi_without_existing_coordinates(self):
         pois_without_coordinates = self.localway_collection.pois.find(
@@ -69,6 +93,11 @@ class MongoDB():
         pois_without_coordinates_list = [poi for poi in pois_without_coordinates]
         random_poi = choice(pois_without_coordinates_list)
         return random_poi
+
+    def get_sections_by_main_category_id(self, category_id):
+        sections = self.localway_collection.sections.find({'categories': ObjectId(category_id)})
+        sections_list = [x for x in sections]
+        return sections_list
 
     def convert_amenity_id_to_name(self, object_id):
         amenities = self.localway_collection.amenities.find({"_id": ObjectId(object_id)})

@@ -9,36 +9,74 @@ __author__ = 'lxz'
 
 
 class ElasticSearchAPI():
+    def __init__(self):
+        pass
+
     def get_poi_json(self, poi_id):
         response = requests.get('http://172.31.237.13:9200/pois/poi/' + poi_id)
         return json.loads(response._content)['_source']
 
 
 class SearchAPI():
-    def get_response_only_what(self, query):
-        return requests.get('http://172.31.237.13:8080/search-api/query?what=' + query)
+    def __init__(self):
+        pass
 
-    def get_response(self, what, where, page_size='25'):
-        return requests.get('http://172.31.237.13:8080/search-api/query?sort=wordScore&sort.dir=desc&what=' + what + '&where=' + where + '&pageSize=' + page_size)
+    @staticmethod
+    def get_response_only_what(query):
+        return requests.get(
+            ConfigReader('site_credentials').get("elastic_search_server_url") + 'search-api/query?what=' + query)
 
-    def get_count_on_page(self, query):
-        response = self.get_response_only_what(query)
+    @staticmethod
+    def get_response(what, where, page_size='25', categories='', amenities='', sort_type='wordScore', sort_dir='desc',
+                     agglomeration='1af000000000000000000000'):
+        return requests.get(ConfigReader('site_credentials').get(
+            "elastic_search_server_url") + 'search-api/query?sort=' + sort_type + '&sort.dir=' + sort_dir + '&agglomeration=' + agglomeration + '&what=' + what + '&where=' + where + '&pageSize=' + page_size + ''.join(
+            ['&categoryName=' + cat for cat in categories]) + ''.join(
+            ['&amenityName=' + amenity for amenity in amenities]))
+
+    @staticmethod
+    def get_count_on_page(query):
+        response = SearchAPI.get_response_only_what(query)
         return json.loads(response._content)['countOnPage']
 
-    def get_total_count(self, query):
-        response = self.get_response_only_what(query)
+    @staticmethod
+    def get_total_count(what='', where='', page_size='25', categories='', amenities='', sort_type='wordScore',
+                        sort_dir='desc', agglomeration='1af000000000000000000000'):
+        response = SearchAPI.get_response(what, where, page_size, categories, amenities, sort_type, sort_dir, agglomeration)
         return json.loads(response._content)['totalCount']
 
-    def get_items(self, what, where):
-        response = self.get_response(what, where)
+    @staticmethod
+    def get_total_count_by_primary_search(what='', where='', page_size='25', categories='', amenities='',
+                                          sort_type='wordScore', sort_dir='desc', agglomeration='1af000000000000000000000'):
+        response = SearchAPI.get_response(what, where, page_size, categories, amenities, sort_type, sort_dir, agglomeration)
+        return json.loads(response._content)['totalCountByPrimarySearch']
+
+    @staticmethod
+    def get_items(what='', where='', page_size='25', categories='', amenities='', sort_type='wordScore',
+                  sort_dir='desc', agglomeration='1af000000000000000000000'):
+        response = SearchAPI.get_response(what, where, page_size, categories, amenities, sort_type, sort_dir, agglomeration)
         return json.loads(response._content)['items']
 
-    def get_viewed_together(self, poi_id):
-        response = requests.get('http://172.31.237.13:8080/search-api/viewedTogether?excludeId=' + poi_id)
+    @staticmethod
+    def get_viewed_together(poi_id):
+        response = requests.get(ConfigReader('site_credentials').get(
+            "elastic_search_server_url") + 'search-api/viewedTogether?excludeId=' + poi_id)
         return json.loads(response._content)
+
+    @staticmethod
+    def chain_names(names):
+        result = ''
+        for i, name in enumerate(names):
+            result += name
+            if i != len(names) - 1:
+                result += '__'
+        return result
 
 
 class YandexAPI():
+    def __init__(self):
+        pass
+
     @staticmethod
     def get_response_from_api(query):
         response = requests.get(re.sub('WHERE', query, YANDEX_MAPS_API_REQUESTS.POI_COORDINATES))
@@ -57,13 +95,35 @@ class YandexAPI():
     @staticmethod
     def get_coordinates(query):
         response = YandexAPI.get_response_from_api(query)
-        coor_string = json.loads(response._content)['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
+        try:
+            coor_string = \
+                json.loads(response._content)['response']['GeoObjectCollection']['featureMember'][0]['GeoObject'][
+                    'Point'][
+                    'pos']
+        except IndexError:
+            # print query
+            # print json.loads(response._content)
+            return 0
         return {'lat': coor_string.split()[1], 'lon': coor_string.split()[0]}
 
 
 class SectionAPI():
-    def get_sections(self):
-        response = requests.get('http://172.31.237.12/portal-api/site/meta/')
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def get_sections():
+        response = requests.get(ConfigReader('site_credentials').get('default_url') + 'portal-api/site/meta/')
+        return json.loads(response._content)
+
+
+class PortalAPI:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def get_config_for_around_poi():
+        response = requests.get(ConfigReader('site_credentials').get('default_url') + 'portal-api/system/getConfig')
         return json.loads(response._content)
 
 

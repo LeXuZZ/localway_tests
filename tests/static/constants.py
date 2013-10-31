@@ -22,8 +22,9 @@ class POI_KEYS():
     CONTACT_TYPE = 'contactType'
     WORK_TIME = 'groupedSchedule'
     AROUND_THE_CLOCK = 'aroundTheClock'
-    AVERAGE_PRICE = 'averagePrice'
-    BUSINESS_LUNCH_PRICE = 'businessLunchPrice'
+    #AVERAGE_PRICE = 'averagePrice'
+    #BUSINESS_LUNCH_PRICE = 'businessLunchPrice'
+    PRICES = 'prices'
     CUISINES = 'cuisines'
     LATITUDE = 'lat'
     LONGITUDE = 'lon'
@@ -57,9 +58,11 @@ class URL_PREFIXES():
 class WEIGHT:
     SCORE_FOR_EXACT_MATCH = 1
     SCORE_FOR_LIKE_MATCH = 0.3
+    SCORE_FOR_LIKE_MATCH_START_POS = 0.8
+    SCORE_FOR_LIKE_MATCH_END_POS = 0.5
 
     STREET_NOT_NEAR_COOF = 0.8
-    STREET_NEAR_COOF =  2.0
+    STREET_NEAR_COOF = 2.0
 
     ADDRESS_WEIGHT = 12
     NAME_WEIGHT = 10
@@ -97,7 +100,9 @@ class WEIGHT:
 
 class YANDEX_MAPS_API_REQUESTS():
 
-    POI_COORDINATES = 'http://geocode-maps.yandex.ru/1.x/?geocode=WHERE&kind=house&format=json&rspn=1&spn=0.47795,0.33855&results=1&ll=37.61776155,55.755773'
+    POI_COORDINATES = 'http://geocode-maps.yandex.ru/1.x/?geocode=WHERE&format=json&rspn=1&spn=4.527907,1.929371&results=1&ll=37.61776155,55.755773'
+    # POI_COORDINATES = 'http://geocode-maps.yandex.ru/1.x/?geocode=WHERE&format=json&rspn=1&spn=0.47795,0.33855&results=1&ll=37.61776155,55.755773'
+
 
 class TEST_POI_ID:
 

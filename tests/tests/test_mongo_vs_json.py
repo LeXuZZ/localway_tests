@@ -11,6 +11,7 @@ class MongoVsJSON(WTFBaseTest):
 
     maxDiff = None
 
+    #ADDED
     # def test_mongo_vs_json(self):
     #     poi = MongoDB().get_poi_by_id('172772af0000000000000000')
     #     poi_json = POI_JSON('172772af0000000000000000')._json

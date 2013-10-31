@@ -18,7 +18,7 @@ selenium:
   # Set type to LOCAL for running locally, and to REMOTE, to run on a remote
   # webdriver.  Default is LOCAL
 #  type: LOCAL
-  type: REMOTE
+  type: LOCAL
 
   # Set to true, to reuse the same browser.  Set to false, to use a fresh browser
   # instance each time.  If set to a number, this  would determine whether the browser
@@ -53,7 +53,7 @@ selenium:
   # Required if using selenium Grid.
   desired_capabilities:
     # Target browser version.
-    version: 20
+    version: 23
     geo.wifi.uri: { "status": "OK", "accuracy": 10.0, "location": {"lat": 52.1771129, "lng": 5.4099848} }
     nativeEvents: True
 

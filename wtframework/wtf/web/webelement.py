@@ -19,6 +19,7 @@ from selenium.common.exceptions import ElementNotSelectableException, \
     TimeoutException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.expected_conditions import _find_element
 from selenium.webdriver.support.wait import WebDriverWait
 from wtframework.wtf.config import WTF_TIMEOUT_MANAGER
 import time
@@ -158,4 +159,22 @@ class freshness_of(object):
             self.element.is_enabled()
             return True
         except StaleElementReferenceException as expected:
+            return False
+
+
+class text_to_be_present_in_one_of_elements(object):
+    """ An expectation for checking if the given text is present in the
+    specified elements.
+    elements, text
+    """
+    def __init__(self, elements, text_):
+        self.elements = elements
+        self.text = text_
+
+    def __call__(self, ignored):
+        try:
+            for element in self.elements:
+                element_text = element.text
+                return element_text in self.text
+        except StaleElementReferenceException:
             return False

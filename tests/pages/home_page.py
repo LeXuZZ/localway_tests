@@ -9,7 +9,6 @@ from wtframework.wtf.web.page import PageObject, InvalidPageError
 
 class HomePage(PageObject, HeaderBlock, FooterBlock, AutoSuggestion, SearchBlock):
 
-
     ### Page Elements Section ###
     ### End Page Elements Section ###
 

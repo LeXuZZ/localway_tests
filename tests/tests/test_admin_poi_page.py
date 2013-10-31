@@ -34,7 +34,7 @@ class AdminPOIPageTest(WTFBaseTest):
         admin_poi_page.select_status(u'Архив')
 
     def test_object_block(self):
-        place_id = '168477'
+        place_id = '150366'
         pg = PostgreSQL()
         webdriver = self.set_up_with_suffix(URL_PREFIXES.ADMIN_POI_ID_PREFIX + place_id)
         webdriver.implicitly_wait(10)

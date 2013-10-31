@@ -1,8 +1,9 @@
+# coding=utf-8
 import unittest
 from tests.pages.poi_page import POIPage
 from tests.static.constants import POI_KEYS, URL_PREFIXES
 from wtframework.wtf.testobjects.test_decorators import ddt, csvdata
-from tests.utils.data_utils import delete_newlines_for_description_and_intro, get_digits_from_string, create_address_from_poi, create_dict_for_contacts, convert_working_time_from_poi, convert_average_price_from_poi, convert_business_lunch_from_poi, get_image_id_from_src, convert_metro_station
+from tests.utils.data_utils import delete_newlines_for_description_and_intro, get_digits_from_string, create_address_from_poi, create_dict_for_contacts, convert_working_time_from_poi, convert_prices_from_poi_json
 from wtframework.wtf.web.page import PageFactory
 from wtframework.wtf.config import ConfigReader
 from wtframework.wtf.testobjects.basetests import WTFBaseTest
@@ -30,6 +31,7 @@ class DDTPOIPageTest(WTFBaseTest):
             poi = MongoDB().get_random_poi()
             return poi['_id']
 
+    #ADDED
     #AWLOCALWAY-503
     @csvdata("testdata.csv")
     def test_complex_check_poi_page(self, paramater_dic):
@@ -42,6 +44,7 @@ class DDTPOIPageTest(WTFBaseTest):
             self.assertEqual(poi[POI_KEYS.NAME], poi_page.name().text)
             #check description
         if POI_KEYS.DESCRIPTION in poi.keys():
+            poi_page.collapse_description().click()
             self.assertEqual(delete_newlines_for_description_and_intro(poi[POI_KEYS.DESCRIPTION]),
                              poi_page.description().text)
             #check intro
@@ -80,13 +83,21 @@ class DDTPOIPageTest(WTFBaseTest):
         if POI_KEYS.WORK_TIME in poi.keys():
             self.assertEqual(convert_working_time_from_poi(poi), poi_page.get_worktime())
             #check average price
-        if POI_KEYS.AVERAGE_PRICE in poi.keys():
-            if poi[POI_KEYS.AVERAGE_PRICE]:
-                self.assertEqual(convert_average_price_from_poi(poi), poi_page.average_price().text)
-            #check business lunch price
-        if POI_KEYS.BUSINESS_LUNCH_PRICE in poi.keys():
-            if poi[POI_KEYS.BUSINESS_LUNCH_PRICE]:
-                self.assertEqual(convert_business_lunch_from_poi(poi), poi_page.business_lunch().text)
+        #if POI_KEYS.AVERAGE_PRICE in poi.keys():
+        #    if poi[POI_KEYS.AVERAGE_PRICE]:
+        #        self.assertEqual(convert_average_price_from_poi(poi), poi_page.average_price().text)
+        #    #check business lunch price
+        #if POI_KEYS.BUSINESS_LUNCH_PRICE in poi.keys():
+        #    if poi[POI_KEYS.BUSINESS_LUNCH_PRICE]:
+        #        self.assertEqual(convert_business_lunch_from_poi(poi), poi_page.business_lunch().text)
+        if POI_KEYS.PRICES in poi.keys():
+            if poi[POI_KEYS.PRICES]:
+                prices = [x.text for x in poi_page.prices()]
+                for i, price in enumerate(poi[POI_KEYS.PRICES]):
+                    price_from_json = convert_prices_from_poi_json(price)
+                    price_from_page = prices[i]
+                    self.assertEqual(price_from_json, price_from_page)
+                    pass
             #check cuisines
         if POI_KEYS.CUISINES in poi.keys():
             self.assertEqual(MongoDB().get_cuisines(poi), poi_page.get_cuisines())

@@ -4,8 +4,8 @@ import time
 from wtframework.wtf.web.webelement import WebElementUtils
 from tests.pages.poi_page import POIPage
 from tests.static.constants import URL_PREFIXES, TEST_POI_ID, POI_KEYS
-from tests.utils.data_utils import crop_first_zero_if_exist, convert_ms_to_HM, get_digits_from_string, get_image_id_from_src, get_time_from_check_info
-from tests.utils.json_utils import POI_JSON, SearchAPI
+from tests.utils.data_utils import crop_first_zero_if_exist, convert_ms_to_HM, get_digits_from_string, get_image_id_from_src, get_time_from_check_info, get_recommendations_for_poi, delete_whitespace_edges
+from tests.utils.json_utils import POI_JSON, SearchAPI, PortalAPI
 from wtframework.wtf.web.page import PageFactory
 from tests.utils.mongo_utils import MongoDB
 from wtframework.wtf.config import ConfigReader
@@ -28,6 +28,7 @@ class POIPageTest(WTFBaseTest):
         webdriver.get(ConfigReader('site_credentials').get("default_url") + suffix)
         return webdriver
 
+    #ADDED
     def test_yandex_map_existence_true_scenario(self):
         poi_id_with_yandex_map = MongoDB().get_random_poi_with_existing_coordinates()[POI_KEYS.ID]
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(poi_id_with_yandex_map))
@@ -37,6 +38,7 @@ class POIPageTest(WTFBaseTest):
         self.assertIsNotNone(POI_JSON(str(poi_id_with_yandex_map)).lon)
         self.assertTrue(poi_page.yandex_map().is_displayed())
 
+    #ADDED
     def test_yandex_map_existence_false_scenario(self):
         poi_id_without_yandex_map = MongoDB().get_random_poi_without_existing_coordinates()[POI_KEYS.ID]
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(poi_id_without_yandex_map))
@@ -46,6 +48,7 @@ class POIPageTest(WTFBaseTest):
         self.assertIsNone(POI_JSON(str(poi_id_without_yandex_map)).lon)
         self.assertFalse(poi_page.yandex_map().is_displayed())
 
+    #ADDED
     def test_cuisine_is_shown(self):
         random_poi_id_with_cuisines = MongoDB().get_random_poi_with_cuisines()[POI_KEYS.ID]
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(random_poi_id_with_cuisines))
@@ -53,6 +56,7 @@ class POIPageTest(WTFBaseTest):
         poi_page = PageFactory.create_page(POIPage, webdriver)
         self.assertGreater(len(poi_page.cuisines()), 0, "block cuisines does not exist")
 
+    #ADDED
     def test_cuisine_is_not_shown(self):
         random_poi_id_without_cuisines = MongoDB().get_random_poi_without_cuisines()[POI_KEYS.ID]
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(random_poi_id_without_cuisines))
@@ -60,6 +64,7 @@ class POIPageTest(WTFBaseTest):
         poi_page = PageFactory.create_page(POIPage, webdriver)
         self.assertEqual(len(poi_page.cuisines()), 0, "block cuisines does exist")
 
+    #ADDED
     def test_hotel_stars_and_check_io_is_shown(self):
         poi_with_hotel_stars_and_check_io = MongoDB().get_random_poi_with_hotel_stars_greater_than_0_and_check_io()
         poi_id = poi_with_hotel_stars_and_check_io[POI_KEYS.ID]
@@ -76,6 +81,7 @@ class POIPageTest(WTFBaseTest):
         self.assertEqual(checkin_time_in_mongo, get_time_from_check_info(poi_page.checkin_time().text))
         self.assertEqual(checkout_time_in_mongo, get_time_from_check_info(poi_page.checkout_time().text))
 
+    #ADDED
     def test_hotel_stars_is_not_shown_and_check_io_is_shown(self):
         poi_without_hotel_stars_and_check_io = MongoDB().get_random_poi_with_hotel_stars_equals_0_and_check_io_gt_0()
         poi_id = poi_without_hotel_stars_and_check_io['_id']
@@ -90,6 +96,7 @@ class POIPageTest(WTFBaseTest):
         self.assertEqual(checkin_time_in_mongo, get_time_from_check_info(poi_page.checkin_time().text))
         self.assertEqual(checkout_time_in_mongo, get_time_from_check_info(poi_page.checkout_time().text))
 
+    #ADDED
     def test_image_gallery(self):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
         webdriver.implicitly_wait(10)
@@ -125,6 +132,7 @@ class POIPageTest(WTFBaseTest):
             webdriver.implicitly_wait(5)
             self.assertEqual(poi[POI_KEYS.IMAGES][i], img_id())
 
+    #ADDED
     def test_image_gallery_select_thumbnail_with_back(self):
         img_id = lambda: get_image_id_from_src(poi_page.get_center_image().get_attribute('src'))
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
@@ -140,6 +148,7 @@ class POIPageTest(WTFBaseTest):
         self.assertEqual(poi[POI_KEYS.IMAGES][6], img_id())
         self.assertIn('active', poi_page.thumbnails_list()[6].get_attribute('class'))
 
+    #ADDED
     def test_viewed_together_map_open(self):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_PHOTO_GALLERY))
         webdriver.implicitly_wait(10)
@@ -159,6 +168,7 @@ class POIPageTest(WTFBaseTest):
     #                 print 'GOTCHA!'
     #         webdriver.refresh()
 
+    #ADDED
     def test_viewed_together_data_existence(self):
         webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + str(TEST_POI_ID.POI_ID_FOR_VIEWED_TOGETHER))
         webdriver.implicitly_wait(10)
@@ -170,6 +180,20 @@ class POIPageTest(WTFBaseTest):
             self.assertNotEqual(v['rating'], '')
             self.assertNotEqual(v['categories'], '')
             self.assertNotEqual(v['address'], '')
+
+    #TODO сделать проверку всех элементов в дропдауне и проверку всех остальных полей
+    def test_around_poi_data_existence(self):
+        around_poi_info = get_recommendations_for_poi("227774af0000000000000000")
+        webdriver = self.set_up_with_suffix(URL_PREFIXES.POI_ID_PREFIX + "227774af0000000000000000")
+        webdriver.implicitly_wait(10)
+        poi_page = PageFactory.create_page(POIPage, webdriver)
+        poi_page.click_show_more()
+        ar_info = poi_page.get_around_poi_info()
+        for i, poi in enumerate(around_poi_info[4]):
+            print str(i) + ') ' + poi["name"]
+            #self.assertEqual(delete_whitespace_edges(poi["name"]), ar_info['pois'][i]['name'])
+        for i, poi in enumerate(ar_info['pois']):
+            print str(i) + ') ' + poi["name"]
 
 if __name__ == "__main__":
         unittest.main()

@@ -24,14 +24,14 @@ class WeightTest(WTFBaseTest):
         return webdriver
 
     def test_weight_calculate(self):
-        what_query = u'Бар'
+        what_query = u'парк разв'
         where_query = u'Тверская'
         items = SearchAPI().get_items(what_query, where_query)
         for item in items:
             # t = time.time()
             # print 'POI name: ' + item[POI_KEYS.NAME] + ' and id: ' + item[POI_KEYS.ID]
             es_poi_street_point = ElasticSearchAPI().get_poi_json(item['_id'])['streetPoint']
-            where_coordinates = YandexAPI().get_coordinates(where_query)
+            where_coordinates = YandexAPI.get_coordinates(where_query)
             if distance(float(es_poi_street_point[POI_KEYS.LATITUDE]), float(es_poi_street_point[POI_KEYS.LONGITUDE]), float(where_coordinates[POI_KEYS.LATITUDE]), float(where_coordinates[POI_KEYS.LONGITUDE])) < 10:
                 N = WEIGHT.STREET_NEAR_COOF
             else:
@@ -39,8 +39,9 @@ class WeightTest(WTFBaseTest):
             poi = MongoDB().get_poi_by_id(item[POI_KEYS.ID])
             fe_score = item[POI_KEYS.SCORE]
             be_score = get_distance_real_weight(where_query, poi, N) + check_all_weight(what_query, poi)
-            # print Decimal(fe_score).quantize(Decimal('1.00'))
-            # print Decimal(be_score).quantize(Decimal('1.00'))
+            print item['name']
+            print Decimal(fe_score).quantize(Decimal('1.00'))
+            print Decimal(be_score).quantize(Decimal('1.00'))
             self.assertAlmostEqual(Decimal(fe_score).quantize(Decimal('1.00')), Decimal(be_score).quantize(Decimal('1.00')), 1)
             # print (time.time()-t)
 
